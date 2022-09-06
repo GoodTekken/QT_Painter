@@ -9,7 +9,11 @@ TARGET = Painter
 INCLUDEPATH += .
 
 # Input
-HEADERS += colorbox.h paintarea.h painter.h resizedialog.h
+HEADERS += colorbox.h paintarea.h painter.h resizedialog.h \
+    basic_com/TelegramScan.h \
+    lidar/TIM561.h
 FORMS += painter.ui resizedialog.ui
-SOURCES += colorbox.cpp main.cpp paintarea.cpp painter.cpp resizedialog.cpp
+SOURCES += colorbox.cpp main.cpp paintarea.cpp painter.cpp resizedialog.cpp \
+    basic_com/TelegramScan.cpp \
+    lidar/TIM561.cpp
 RESOURCES += Image.qrc

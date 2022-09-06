@@ -739,6 +739,20 @@
        </widget>
       </item>
       <item>
+       <widget class="QPushButton" name="connect">
+        <property name="text">
+         <string>connect</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="disconnect">
+        <property name="text">
+         <string>disconnect</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <spacer name="verticalSpacer">
         <property name="orientation">
          <enum>Qt::Vertical</enum>

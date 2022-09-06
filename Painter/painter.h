@@ -94,6 +94,10 @@ private slots:
 
     void showReisize();
 
+    void on_connect_clicked();
+
+    void on_disconnect_clicked();
+
 protected:
     bool eventFilter(QObject *object, QEvent *event);
 

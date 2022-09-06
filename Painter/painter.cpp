@@ -8,10 +8,13 @@
 #include <QCursor>
 #include <QFontDialog>
 #include <QPalette>
+#include "lidar/TIM561.h"
 
 int painter_w;
 int painter_h;
 bool painter_resized = false;
+TIM561 tim;
+bool connect_flag = false;
 
 Painter::Painter(QWidget *parent) : QMainWindow(parent), ui(new Ui::Painter)
 {
@@ -402,3 +405,68 @@ bool Painter::eventFilter(QObject *object, QEvent *event)
         return QMainWindow::eventFilter(object, event);
     }
 }
+
+//void *p_basler_Trigger(void *arg)
+void *p_connect_Tim561(void *arg)
+{
+    connect_flag = true;
+    std::cout << "Connection..." << std::endl;
+    if( tim.connect("192.168.0.71",2112) )
+    {
+        std::cout << "Connected" << std::endl;
+        if( tim.start() )
+        {
+            std::cout << "Started" << std::endl;
+            while(connect_flag)
+            {
+                usleep(70000); //70ms
+                tim.update();
+                auto tmp = tim.getDataPoints();
+                for( int i = 0 ; i< TIM561::NBR_DATA ; i+=1 )
+                {
+                    printf("[%g, %d] ", tmp->at(i).first, tmp->at(i).second);
+                }
+                printf("\n\n");
+            }
+        }
+    }
+}
+
+void *p_disconnect_Tim561(void *arg)
+{
+    connect_flag = false;
+    sleep(1);//1s;
+    tim.close();
+    printf("Tim561 disnnect.\n");
+}
+
+void Painter::on_connect_clicked()
+{
+    pthread_t tidp;
+    int ret;
+    ret = pthread_create(&tidp,NULL,p_connect_Tim561,NULL);
+    if(ret)
+    {
+        printf("pthread_creat failed:%d\n",ret);
+    }
+    else
+    {
+        printf("pthread_creat success\n");
+    }
+}
+
+void Painter::on_disconnect_clicked()
+{
+    pthread_t tidp;
+    int ret;
+    ret = pthread_create(&tidp,NULL,p_disconnect_Tim561,NULL);
+    if(ret)
+    {
+        printf("disconnect Tim561 failed:%d\n",ret);
+    }
+    else
+    {
+        printf("disconnect Tim561 success\n");
+    }
+}
+
