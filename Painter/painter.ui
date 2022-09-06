@@ -6,21 +6,21 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>640</height>
+    <width>1100</width>
+    <height>800</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>800</width>
-    <height>640</height>
+    <width>1100</width>
+    <height>800</height>
    </size>
   </property>
   <property name="windowTitle">
    <string>Painter</string>
   </property>
   <property name="windowIcon">
-   <iconset>
+   <iconset resource="Image.qrc">
     <normaloff>:/img/icon.png</normaloff>:/img/icon.png</iconset>
   </property>
   <widget class="QWidget" name="centralWidget">
@@ -83,7 +83,7 @@
                     <string/>
                    </property>
                    <property name="icon">
-                    <iconset>
+                    <iconset resource="Image.qrc">
                      <normaloff>:/img/tool_arrow.png</normaloff>:/img/tool_arrow.png</iconset>
                    </property>
                    <property name="iconSize">
@@ -118,7 +118,7 @@
                     <string/>
                    </property>
                    <property name="icon">
-                    <iconset>
+                    <iconset resource="Image.qrc">
                      <normaloff>:/img/tool_pencil.png</normaloff>:/img/tool_pencil.png</iconset>
                    </property>
                    <property name="iconSize">
@@ -157,7 +157,7 @@
                     <string/>
                    </property>
                    <property name="icon">
-                    <iconset>
+                    <iconset resource="Image.qrc">
                      <normaloff>:/img/tool_eraser.gif</normaloff>:/img/tool_eraser.gif</iconset>
                    </property>
                    <property name="iconSize">
@@ -192,7 +192,7 @@
                     <string/>
                    </property>
                    <property name="icon">
-                    <iconset>
+                    <iconset resource="Image.qrc">
                      <normaloff>:/img/tool_line.gif</normaloff>:/img/tool_line.gif</iconset>
                    </property>
                    <property name="iconSize">
@@ -234,7 +234,7 @@
                     <string/>
                    </property>
                    <property name="icon">
-                    <iconset>
+                    <iconset resource="Image.qrc">
                      <normaloff>:/img/tool_rectangle.png</normaloff>:/img/tool_rectangle.png</iconset>
                    </property>
                    <property name="iconSize">
@@ -272,7 +272,7 @@
                     <string/>
                    </property>
                    <property name="icon">
-                    <iconset>
+                    <iconset resource="Image.qrc">
                      <normaloff>:/img/tool_eclipse.png</normaloff>:/img/tool_eclipse.png</iconset>
                    </property>
                    <property name="iconSize">
@@ -311,7 +311,7 @@
                     <string/>
                    </property>
                    <property name="icon">
-                    <iconset>
+                    <iconset resource="Image.qrc">
                      <normaloff>:/img/tool_rectangle2.png</normaloff>:/img/tool_rectangle2.png</iconset>
                    </property>
                    <property name="iconSize">
@@ -340,7 +340,7 @@
                     <string/>
                    </property>
                    <property name="icon">
-                    <iconset>
+                    <iconset resource="Image.qrc">
                      <normaloff>:/img/tool_word.gif</normaloff>:/img/tool_word.gif</iconset>
                    </property>
                    <property name="iconSize">
@@ -379,7 +379,7 @@
                     <string/>
                    </property>
                    <property name="icon">
-                    <iconset>
+                    <iconset resource="Image.qrc">
                      <normaloff>:/img/tool_bucket.png</normaloff>:/img/tool_bucket.png</iconset>
                    </property>
                    <property name="iconSize">
@@ -414,7 +414,7 @@
                     <string/>
                    </property>
                    <property name="icon">
-                    <iconset>
+                    <iconset resource="Image.qrc">
                      <normaloff>:/img/tool_select.gif</normaloff>:/img/tool_select.gif</iconset>
                    </property>
                    <property name="iconSize">
@@ -453,7 +453,7 @@
                     <string/>
                    </property>
                    <property name="icon">
-                    <iconset>
+                    <iconset resource="Image.qrc">
                      <normaloff>:/img/cursor_spray.png</normaloff>:/img/cursor_spray.png</iconset>
                    </property>
                    <property name="iconSize">
@@ -482,7 +482,7 @@
                     <string/>
                    </property>
                    <property name="icon">
-                    <iconset>
+                    <iconset resource="Image.qrc">
                      <normaloff>:/img/cursor_glass.png</normaloff>:/img/cursor_glass.png</iconset>
                    </property>
                    <property name="iconSize">
@@ -766,8 +766,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>386</width>
-         <height>576</height>
+         <width>536</width>
+         <height>736</height>
         </rect>
        </property>
        <layout class="QFormLayout" name="formLayout">
@@ -798,7 +798,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>1100</width>
      <height>22</height>
     </rect>
    </property>
@@ -831,6 +831,7 @@
     <property name="title">
      <string>Help</string>
     </property>
+    <addaction name="separator"/>
     <addaction name="actionAbout"/>
     <addaction name="actionAbout_Qt"/>
    </widget>
@@ -980,6 +981,8 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="Image.qrc"/>
+ </resources>
  <connections/>
 </ui>

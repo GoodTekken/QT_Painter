@@ -122,7 +122,7 @@ void Painter::on_tool_rectangle_clicked()
 
 void Painter::About()
 {
-    QMessageBox::about(this, "About", "NTUEE Ting-Yuan Hsia");
+    QMessageBox::about(this, "About", "Hapyy Coding,Tekken");
 }
 
 void Painter::New_File()

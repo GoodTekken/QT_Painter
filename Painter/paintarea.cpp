@@ -19,8 +19,8 @@ PaintArea::PaintArea(QWidget *parent) : QWidget(parent)
     _right = false;
     mySprayWidth = 10;
     _scaled = false;
-    _size_x = 400;
-    _size_y = 300;
+    _size_x = 900;
+    _size_y = 700;
     emit setSize(_size_x, _size_y);
     emit noRedo();
     emit noUndo();
@@ -82,8 +82,8 @@ void PaintArea::setBackColor(const QColor newColor)
 
 void PaintArea::clearImage()
 {
-    _size_x = 400;
-    _size_y = 300;
+    _size_x = 900;
+    _size_y = 700;
     resize(_size_x, _size_y);
     setMinimumSize(_size_x, _size_y);
     setMaximumSize(_size_x, _size_y);
