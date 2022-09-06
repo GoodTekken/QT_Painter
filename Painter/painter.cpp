@@ -10,6 +10,8 @@
 #include <QPalette>
 #include "lidar/TIM561.h"
 
+#define PI 3.14159265
+
 int painter_w;
 int painter_h;
 bool painter_resized = false;
@@ -46,8 +48,12 @@ Painter::Painter(QWidget *parent) : QMainWindow(parent), ui(new Ui::Painter)
     connect(ui->paint_area, SIGNAL(canCopy()), this, SLOT(canCopy()));
     connect(ui->paint_area, SIGNAL(canPaste()), this, SLOT(canPaste()));
     connect(ui->actionResize, SIGNAL(triggered()), this, SLOT(showReisize()));
+
+    connect(this,SIGNAL(tranferTimData(const QPointF*)),this,SLOT(showTimData(const QPointF*)));
     ui->width_string->installEventFilter(this);
     ui->spray_string->installEventFilter(this);
+    mytimer = new QTimer(this);
+    connect(mytimer, SIGNAL(timeout()), this, SLOT(p_drawLine()));
 }
 
 Painter::~Painter()
@@ -467,6 +473,60 @@ void Painter::on_disconnect_clicked()
     else
     {
         printf("disconnect Tim561 success\n");
+    }
+}
+
+
+void Painter::showTimData(const QPointF* points)
+{
+    ui->paint_area->earseImage();
+    ui->paint_area->drawTimPoints(points,808);
+}
+
+void Painter::p_drawLine()
+{
+    if(connect_flag == true)
+    {
+        QPointF pointf[808];
+        int temx;
+        int temy;
+        auto tmp = tim.getDataPoints();
+        int length = 0;
+        for( int i = 0 ; i< TIM561::NBR_DATA ; i+=1 )
+        {
+//            printf("[%g, %d] ", tmp->at(i).first, tmp->at(i).second);
+            length = length +1 ;
+
+            temx = tmp->at(i).second * cos((-tmp->at(i).first)*PI/180.0);
+            temy = tmp->at(i).second * sin((-tmp->at(i).first)*PI/180.0);
+
+            pointf[i].setX(800 + temx/5.0);
+            pointf[i].setY(800 + temy/5.0);
+        }
+        emit tranferTimData(pointf);
+    }
+}
+void Painter::on_drawLine_clicked()
+{
+//    QPoint startPoint(0,0);
+//    QPoint endPoint(100,100);
+//    ui->paint_area->drawTimLine(startPoint,endPoint);
+//    pthread_t tidp;
+//    int ret;
+//    ret = pthread_create(&tidp,NULL,p_drawLine,NULL);
+//    if(ret)
+//    {
+//        printf("p_drawLine failed:%d\n",ret);
+//    }
+//    else
+//    {
+//        printf("p_drawLine success\n");
+//    }
+//    void *arg;
+//    p_drawLine(arg);
+    if(mytimer->isActive()==false)
+    {
+        mytimer->start(100);  //100ms
     }
 }
 

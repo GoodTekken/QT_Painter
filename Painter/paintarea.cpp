@@ -96,6 +96,15 @@ void PaintArea::clearImage()
     update();
 }
 
+void PaintArea::earseImage()
+{
+    image.fill(qRgb(255, 255, 255));
+    modified = true;
+    _scaled = true;
+    _before_scale = image;
+//    update();
+}
+
 void PaintArea::setPenFont(const QFont newFont)
 {
     myPenFont = newFont;
@@ -128,6 +137,27 @@ void PaintArea::setTool(const int i)
 }
 
 void PaintArea::drawStraightLine(const QPoint startPoint, const QPoint endPoint)
+{
+    QPainter painter(&image);
+    if (!_right)
+        painter.setPen(QPen(myPenColor, myPenWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    else
+        painter.setPen(QPen(myFillColor, myPenWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    painter.drawLine(startPoint, endPoint);
+    int rad = (myPenWidth / 2) + 2;
+    update(QRect(startPoint, endPoint).normalized().adjusted(-rad, -rad, +rad, +rad));
+    lastPoint = endPoint;
+    update();
+}
+
+void PaintArea::drawTimPoints(const QPointF* points, int pointCount)
+{
+    QPainter painter(&image);
+    painter.drawPoints(points,pointCount);
+    update();
+}
+
+void PaintArea::drawTimLine(const QPoint startPoint, const QPoint endPoint)
 {
     QPainter painter(&image);
     if (!_right)

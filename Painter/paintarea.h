@@ -48,9 +48,12 @@ public:
     void zoomRecover();
     bool getZoom() { return _scaled; }
     void ReSize(int, int);
+    void drawTimLine(const QPoint, const QPoint);
+    void drawTimPoints(const QPointF* points, int pointCount);
 
 public slots:
     void clearImage();
+    void earseImage();
     void print();
 
 signals:

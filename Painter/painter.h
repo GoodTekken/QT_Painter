@@ -4,6 +4,7 @@
 #include <QtWidgets/QMainWindow>
 #include <QtGui>
 #include "resizedialog.h"
+#include <QTimer>
 
 namespace Ui {
 class Painter;
@@ -16,6 +17,10 @@ class Painter : public QMainWindow
 public:
     explicit Painter(QWidget *parent = 0);
     ~Painter();
+
+signals:
+    void tranferTimData(const QPointF* points);
+
     
 private slots:
     void on_setwidth_clicked();
@@ -98,6 +103,12 @@ private slots:
 
     void on_disconnect_clicked();
 
+    void on_drawLine_clicked();
+
+    void showTimData(const QPointF* points);
+
+    void p_drawLine();
+
 protected:
     bool eventFilter(QObject *object, QEvent *event);
 
@@ -109,6 +120,8 @@ private:
     QColor Color;
     QColor BGColor;
     QFont _font;
+
+    QTimer *mytimer;
 
 };
 
