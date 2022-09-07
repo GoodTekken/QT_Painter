@@ -166,6 +166,18 @@ void Painter::New_File()
     ui->paint_area->setGeometry(9, 9, 400, 300);
     ui->scrollAreaWidgetContents->setGeometry(0, 0, 418, 318);
     Resize();
+
+    ui->detect_length->setText("1200");
+    ui->detect_width->setText("500");
+    ui->rack_length->setText("460");
+    ui->rack_width->setText("460");
+    ui->pos1_X->setText("0");
+    ui->pos1_Y->setText("0");
+    ui->pos1_angle->setText("0");
+    ui->pos2_X->setText("0");
+    ui->pos2_Y->setText("0");
+    ui->pos2_angle->setText("0");
+
 }
 
 void Painter::on_tool_eclipse_clicked()
@@ -500,8 +512,8 @@ void Painter::p_drawLine()
             temx = tmp->at(i).second * cos((-tmp->at(i).first)*PI/180.0);
             temy = tmp->at(i).second * sin((-tmp->at(i).first)*PI/180.0);
 
-            pointf[i].setX(800 + temx/5.0);
-            pointf[i].setY(800 + temy/5.0);
+            pointf[i].setX(400 + temx/4.0);
+            pointf[i].setY(600 + temy/4.0);
         }
         emit tranferTimData(pointf);
     }
