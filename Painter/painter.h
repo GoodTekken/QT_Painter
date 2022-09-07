@@ -20,6 +20,7 @@ public:
 
 signals:
     void tranferTimData(const QPointF* points);
+    void draw_leg_point(const QPointF* points);
 
     
 private slots:
@@ -106,6 +107,8 @@ private slots:
     void on_drawLine_clicked();
 
     void showTimData(const QPointF* points);
+
+    void showTimLeg(const QPointF* points);
 
     void p_drawLine();
 

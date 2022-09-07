@@ -157,6 +157,15 @@ void PaintArea::drawTimPoints(const QPointF* points, int pointCount)
     update();
 }
 
+void PaintArea::drawTimLeg(const QPointF* points, int pointCount)
+{
+    QPainter painter(&image);
+    painter.setPen(QPen(Qt::blue,4,Qt::SolidLine));
+    painter.drawEllipse(points[0].x(),points[0].y(),10,10);
+    painter.drawEllipse(points[1].x(),points[1].y(),10,10);
+    update();
+}
+
 void PaintArea::drawTimLine(const QPoint startPoint, const QPoint endPoint)
 {
     QPainter painter(&image);

@@ -50,6 +50,7 @@ public:
     void ReSize(int, int);
     void drawTimLine(const QPoint, const QPoint);
     void drawTimPoints(const QPointF* points, int pointCount);
+    void drawTimLeg(const QPointF* points, int pointCount);
 
 public slots:
     void clearImage();

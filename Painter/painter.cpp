@@ -50,6 +50,8 @@ Painter::Painter(QWidget *parent) : QMainWindow(parent), ui(new Ui::Painter)
     connect(ui->actionResize, SIGNAL(triggered()), this, SLOT(showReisize()));
 
     connect(this,SIGNAL(tranferTimData(const QPointF*)),this,SLOT(showTimData(const QPointF*)));
+    connect(this,SIGNAL(draw_leg_point(const QPointF*)),this,SLOT(showTimLeg(const QPointF*)));
+
     ui->width_string->installEventFilter(this);
     ui->spray_string->installEventFilter(this);
     mytimer = new QTimer(this);
@@ -495,6 +497,12 @@ void Painter::showTimData(const QPointF* points)
     ui->paint_area->drawTimPoints(points,808);
 }
 
+void Painter::showTimLeg(const QPointF* points)
+{
+//    ui->paint_area->earseImage();
+    ui->paint_area->drawTimLeg(points,2);
+}
+
 void Painter::p_drawLine()
 {
     if(connect_flag == true)
@@ -504,18 +512,71 @@ void Painter::p_drawLine()
         int temy;
         auto tmp = tim.getDataPoints();
         int length = 0;
+
+        float pos_x1 = ui->pos1_X->text().toFloat();
+        float pos_y1 = ui->pos1_Y->text().toFloat();
+        float pos_angle1 = ui->pos1_angle->text().toFloat();
+
         for( int i = 0 ; i< TIM561::NBR_DATA ; i+=1 )
         {
 //            printf("[%g, %d] ", tmp->at(i).first, tmp->at(i).second);
             length = length +1 ;
 
-            temx = tmp->at(i).second * cos((-tmp->at(i).first)*PI/180.0);
-            temy = tmp->at(i).second * sin((-tmp->at(i).first)*PI/180.0);
+            temx = tmp->at(i).second * cos((-tmp->at(i).first+pos_angle1)*PI/180.0)+pos_x1;
+            temy = tmp->at(i).second * sin((-tmp->at(i).first+pos_angle1)*PI/180.0)+pos_y1;
 
             pointf[i].setX(400 + temx/4.0);
             pointf[i].setY(600 + temy/4.0);
         }
         emit tranferTimData(pointf);
+
+        QPointF legpointf[2];
+        //left point
+
+        float theta = atan((ui->detect_width->text().toFloat()/2.0+200)/ui->detect_length->text().toFloat())*180/PI;
+        int count = theta*3;
+        float detectlength = ui->detect_length->text().toFloat()+100;
+
+        for( int i = 404 ; i< 404+count ; i+=1 )
+        {
+            if(tmp->at(i).second * sin((tmp->at(i).first+pos_angle1)*PI/180.0) < detectlength &&
+                tmp->at(i).second * sin((tmp->at(i).first+pos_angle1)*PI/180.0) > (detectlength-500))
+            {
+                temx = tmp->at(i).second * cos((-tmp->at(i).first+pos_angle1)*PI/180.0)+pos_x1;
+                temy = tmp->at(i).second * sin((-tmp->at(i).first+pos_angle1)*PI/180.0)+pos_y1;
+
+                ui->left1_X->setText(QString::number(temx));
+                ui->left1_Y->setText(QString::number(-temy));
+
+
+                legpointf[0].setX(400 + temx/4.0);
+                legpointf[0].setY(600 + temy/4.0);
+                break;
+            }
+        }
+
+        //right point
+        for( int i = 404 ; i> 404-count ; i-=1 )
+        {
+            if(tmp->at(i).second * sin((tmp->at(i).first+pos_angle1)*PI/180.0) < detectlength&&
+                    tmp->at(i).second * sin((tmp->at(i).first+pos_angle1)*PI/180.0) > (detectlength-500))
+            {
+                temx = tmp->at(i).second * cos((-tmp->at(i).first+pos_angle1)*PI/180.0)+pos_x1;
+                temy = tmp->at(i).second * sin((-tmp->at(i).first+pos_angle1)*PI/180.0)+pos_y1;
+
+
+                ui->right1_X->setText(QString::number(temx));
+                ui->right1_Y->setText(QString::number(-temy));
+
+                legpointf[1].setX(400 + temx/4.0);
+                legpointf[1].setY(600 + temy/4.0);
+                break;
+            }
+        }
+
+
+        emit draw_leg_point(legpointf);
+
     }
 }
 void Painter::on_drawLine_clicked()
