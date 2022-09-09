@@ -16,11 +16,13 @@ class Painter : public QMainWindow
     
 public:
     explicit Painter(QWidget *parent = 0);
+    void *p_test_Tim561(void *arg);
     ~Painter();
 
 signals:
     void tranferTimData(const QPointF* points);
     void draw_leg_point(const QPointF* points);
+    void manualTrigger(const std::vector<std::pair<float, uint16_t>>*);
 
     
 private slots:
@@ -111,6 +113,10 @@ private slots:
     void showTimLeg(const QPointF* points);
 
     void p_drawLine();
+
+    void p_manual_drawLine(const std::vector<std::pair<float, uint16_t>>*);
+
+    void on_Test_Button_clicked();
 
 protected:
     bool eventFilter(QObject *object, QEvent *event);

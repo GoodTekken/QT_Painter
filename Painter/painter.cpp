@@ -16,6 +16,7 @@ int painter_w;
 int painter_h;
 bool painter_resized = false;
 TIM561 tim;
+TIM561 tim2;
 bool connect_flag = false;
 
 Painter::Painter(QWidget *parent) : QMainWindow(parent), ui(new Ui::Painter)
@@ -56,6 +57,7 @@ Painter::Painter(QWidget *parent) : QMainWindow(parent), ui(new Ui::Painter)
     ui->spray_string->installEventFilter(this);
     mytimer = new QTimer(this);
     connect(mytimer, SIGNAL(timeout()), this, SLOT(p_drawLine()));
+    connect(this, SIGNAL(manualTrigger(const std::vector<std::pair<float, uint16_t>>*)), this, SLOT(p_manual_drawLine(const std::vector<std::pair<float, uint16_t>>*)));
 }
 
 Painter::~Painter()
@@ -431,7 +433,7 @@ void *p_connect_Tim561(void *arg)
 {
     connect_flag = true;
     std::cout << "Connection..." << std::endl;
-    if( tim.connect("192.168.0.71",2112) )
+    if( tim.connect("192.168.0.72",2112))
     {
         std::cout << "Connected" << std::endl;
         if( tim.start() )
@@ -457,6 +459,7 @@ void *p_disconnect_Tim561(void *arg)
     connect_flag = false;
     sleep(1);//1s;
     tim.close();
+    tim2.close();
     printf("Tim561 disnnect.\n");
 }
 
@@ -493,7 +496,7 @@ void Painter::on_disconnect_clicked()
 
 void Painter::showTimData(const QPointF* points)
 {
-    ui->paint_area->earseImage();
+//    ui->paint_area->earseImage();
     ui->paint_area->drawTimPoints(points,808);
 }
 
@@ -511,6 +514,83 @@ void Painter::p_drawLine()
         int temx;
         int temy;
         auto tmp = tim.getDataPoints();
+        int length = 0;
+
+        float pos_x1 = ui->pos1_X->text().toFloat();
+        float pos_y1 = ui->pos1_Y->text().toFloat();
+        float pos_angle1 = ui->pos1_angle->text().toFloat();
+
+        for( int i = 0 ; i< TIM561::NBR_DATA ; i+=1 )
+        {
+//            printf("[%g, %d] ", tmp->at(i).first, tmp->at(i).second);
+            length = length +1 ;
+
+            temx = tmp->at(i).second * cos((-tmp->at(i).first+pos_angle1)*PI/180.0)+pos_x1;
+            temy = tmp->at(i).second * sin((-tmp->at(i).first+pos_angle1)*PI/180.0)+pos_y1;
+
+            pointf[i].setX(400 + temx/4.0);
+            pointf[i].setY(600 + temy/4.0);
+        }
+        emit tranferTimData(pointf);
+
+        QPointF legpointf[2];
+        //left point
+
+        float theta = atan((ui->detect_width->text().toFloat()/2.0+200)/ui->detect_length->text().toFloat())*180/PI;
+        int count = theta*3;
+        float detectlength = ui->detect_length->text().toFloat()+100;
+
+        for( int i = 404 ; i< 404+count ; i+=1 )
+        {
+            if(tmp->at(i).second * sin((tmp->at(i).first+pos_angle1)*PI/180.0) < detectlength &&
+                tmp->at(i).second * sin((tmp->at(i).first+pos_angle1)*PI/180.0) > (detectlength-500))
+            {
+                temx = tmp->at(i).second * cos((-tmp->at(i).first+pos_angle1)*PI/180.0)+pos_x1;
+                temy = tmp->at(i).second * sin((-tmp->at(i).first+pos_angle1)*PI/180.0)+pos_y1;
+
+                ui->left1_X->setText(QString::number(temx));
+                ui->left1_Y->setText(QString::number(-temy));
+
+
+                legpointf[0].setX(400 + temx/4.0);
+                legpointf[0].setY(600 + temy/4.0);
+                break;
+            }
+        }
+
+        //right point
+        for( int i = 404 ; i> 404-count ; i-=1 )
+        {
+            if(tmp->at(i).second * sin((tmp->at(i).first+pos_angle1)*PI/180.0) < detectlength&&
+                    tmp->at(i).second * sin((tmp->at(i).first+pos_angle1)*PI/180.0) > (detectlength-500))
+            {
+                temx = tmp->at(i).second * cos((-tmp->at(i).first+pos_angle1)*PI/180.0)+pos_x1;
+                temy = tmp->at(i).second * sin((-tmp->at(i).first+pos_angle1)*PI/180.0)+pos_y1;
+
+
+                ui->right1_X->setText(QString::number(temx));
+                ui->right1_Y->setText(QString::number(-temy));
+
+                legpointf[1].setX(400 + temx/4.0);
+                legpointf[1].setY(600 + temy/4.0);
+                break;
+            }
+        }
+
+
+        emit draw_leg_point(legpointf);
+
+    }
+}
+
+void Painter::p_manual_drawLine(const std::vector<std::pair<float, uint16_t>> *tmp)
+{
+    if(connect_flag == true)
+    {
+        QPointF pointf[808];
+        int temx;
+        int temy;
+//        auto tmp = tim.getDataPoints();
         int length = 0;
 
         float pos_x1 = ui->pos1_X->text().toFloat();
@@ -601,5 +681,62 @@ void Painter::on_drawLine_clicked()
     {
         mytimer->start(100);  //100ms
     }
+}
+
+void *Painter::p_test_Tim561(void *arg)
+{
+//    connect_flag = true;
+//    if( tim.connect("192.168.0.72",2112))
+//    {
+//        std::cout << "Connected" << std::endl;
+//        if( tim.start() )
+//        {
+//            std::cout << "Started" << std::endl;
+//            tim.update();
+//            auto tmp = tim.getDataPoints();
+//            emit this->manualTrigger(tmp);
+//        }
+//    }
+}
+
+void Painter::on_Test_Button_clicked()
+{
+//    pthread_t tidp;
+//    int ret;
+//    ret = pthread_create(&tidp,NULL,p_test_Tim561,this);
+//    if(ret)
+//    {
+//        printf("disconnect Tim561 failed:%d\n",ret);
+//    }
+//    else
+//    {
+//        printf("disconnect Tim561 success\n");
+//    }
+    connect_flag = true;
+    if( tim.connect("192.168.0.71",2112))
+    {
+        std::cout << "Connected" << std::endl;
+        if( tim.start() )
+        {
+            std::cout << "Started" << std::endl;
+            tim.update();
+            auto tmp = tim.getDataPoints();
+            emit this->manualTrigger(tmp);
+        }
+    }
+    tim.close();
+
+    if( tim.connect("192.168.0.72",2112))
+    {
+        std::cout << "Connected" << std::endl;
+        if( tim.start() )
+        {
+            std::cout << "Started" << std::endl;
+            tim.update();
+            auto tmp = tim.getDataPoints();
+            emit this->manualTrigger(tmp);
+        }
+    }
+    tim.close();
 }
 

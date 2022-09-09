@@ -107,6 +107,13 @@
          </widget>
         </item>
         <item>
+         <widget class="QPushButton" name="Test_Button">
+          <property name="text">
+           <string>Test</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <layout class="QHBoxLayout" name="horizontalLayout_7">
           <item>
            <widget class="QLabel" name="label_5">
