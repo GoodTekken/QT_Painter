@@ -171,10 +171,10 @@ void Painter::New_File()
     ui->scrollAreaWidgetContents->setGeometry(0, 0, 418, 318);
     Resize();
 
-    ui->detect_length->setText("1200");
-    ui->detect_width->setText("500");
-    ui->rack_length->setText("460");
-    ui->rack_width->setText("460");
+    ui->detect_length->setText("1000");
+    ui->detect_width->setText("1200");
+    ui->rack_length->setText("1000");
+    ui->rack_width->setText("1000");
     ui->pos1_X->setText("0");
     ui->pos1_Y->setText("0");
     ui->pos1_angle->setText("0");

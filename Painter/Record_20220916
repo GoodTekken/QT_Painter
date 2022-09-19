@@ -1,0 +1,13 @@
+Tim561 Workflows
+Parameterize the scan
+1  Log in: sMN SetAccessMode (see 4.1, page 14)
+2  Set frequency and resolution: sMN mLMPsetscancfg (see 4.2.1, page 17)
+3  Configure scandata content: sWN LMDscandatacfg (see 4.3.1, page 77)
+4  Configure scandata output: sWN LMPoutputRange (see 4.3.2 page 81)
+5  Store parameters: sMN mEEwriteall (see 0, page 72)
+6  Log out: sMN Run (see 4.2.26, page 75)
+7  Request scan:
+sRN LMDscandata (see 4.3.4, page 87)
+sEN LMDscandata (see 4.3.7, page 92)
+
+

@@ -17,3 +17,6 @@ SOURCES += colorbox.cpp main.cpp paintarea.cpp painter.cpp resizedialog.cpp \
     basic_com/TelegramScan.cpp \
     lidar/TIM561.cpp
 RESOURCES += Image.qrc
+
+DISTFILES += \
+    Record_20220916

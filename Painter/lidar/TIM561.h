@@ -267,7 +267,8 @@ private:
    * \private
    * \brief Order to get a continuous measure
    */
-    constexpr static const char* CONTINUOUS_MEASURE= "sRN LMDscandata 1";
+//    constexpr static const char* CONTINUOUS_MEASURE= "sRN LMDscandata 1";
+    constexpr static const char* CONTINUOUS_MEASURE= "sRN LMDscandata";
 
     /**
    * \private
