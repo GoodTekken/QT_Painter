@@ -433,7 +433,7 @@ void *p_connect_Tim561(void *arg)
 {
     connect_flag = true;
     std::cout << "Connection..." << std::endl;
-    if( tim.connect("192.168.0.72",2112))
+    if( tim.connect("192.168.0.71",2112))
     {
         std::cout << "Connected" << std::endl;
         if( tim.start() )
@@ -442,7 +442,8 @@ void *p_connect_Tim561(void *arg)
             while(connect_flag)
             {
                 usleep(70000); //70ms
-                tim.update();
+//                tim.update();
+                tim.updatemeandate();
                 auto tmp = tim.getDataPoints();
                 for( int i = 0 ; i< TIM561::NBR_DATA ; i+=1 )
                 {
