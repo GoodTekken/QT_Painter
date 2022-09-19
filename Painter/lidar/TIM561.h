@@ -111,7 +111,7 @@ public:
     */
     constexpr static const float STEP_ANGLE        = 0.333333;// 0.3345719
 
-
+    constexpr static const int TOTAL_NUMBER        = 843;
 
 private:
 

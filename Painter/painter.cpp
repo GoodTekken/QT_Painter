@@ -511,7 +511,10 @@ void Painter::p_drawLine()
 {
     if(connect_flag == true)
     {
-        QPointF pointf[TIM561::NBR_DATA];
+        QPointF pointfToPaint[TIM561::NBR_DATA];
+        int pointlengthX[TIM561::NBR_DATA];
+        int pointlengthY[TIM561::NBR_DATA];
+
         int temx;
         int temy;
         auto tmp = tim.getDataPoints();
@@ -523,61 +526,122 @@ void Painter::p_drawLine()
 
         for( int i = 0 ; i< TIM561::NBR_DATA ; i+=1 )
         {
-//            printf("[%g, %d] ", tmp->at(i).first, tmp->at(i).second);
-            length = length +1 ;
-
             temx = tmp->at(i).second * cos((-tmp->at(i).first+pos_angle1)*PI/180.0)+pos_x1;
             temy = tmp->at(i).second * sin((-tmp->at(i).first+pos_angle1)*PI/180.0)+pos_y1;
 
-            pointf[i].setX(400 + temx/4.0);
-            pointf[i].setY(600 + temy/4.0);
+            pointlengthX[i]= (int)(-temx);
+            pointlengthY[i]= (int)(-temy);
+
+            pointfToPaint[i].setX(400 + temx/4.0);
+            pointfToPaint[i].setY(600 + temy/4.0);
         }
-        emit tranferTimData(pointf);
+        emit tranferTimData(pointfToPaint);
 
         QPointF legpointf[2];
+        QPointF actuallegpointf[2];
         //left point
 
         float theta = atan((ui->detect_width->text().toFloat()/2.0+200)/ui->detect_length->text().toFloat())*180/PI;
-        int count = theta*3;
+        int countIndex = theta*3;
         float detectlength = ui->detect_length->text().toFloat()+100;
-
-        for( int i = 404 ; i< 404+count ; i+=1 )
-        {
-            if(tmp->at(i).second * sin((tmp->at(i).first+pos_angle1)*PI/180.0) < detectlength &&
-                tmp->at(i).second * sin((tmp->at(i).first+pos_angle1)*PI/180.0) > (detectlength-500))
-            {
-                temx = tmp->at(i).second * cos((-tmp->at(i).first+pos_angle1)*PI/180.0)+pos_x1;
-                temy = tmp->at(i).second * sin((-tmp->at(i).first+pos_angle1)*PI/180.0)+pos_y1;
-
-                ui->left1_X->setText(QString::number(temx));
-                ui->left1_Y->setText(QString::number(-temy));
+        int middle_placement = (TIM561::NBR_DATA/2) ;
+        int cal_startAngleIndex = middle_placement - countIndex;
+        int cal_endAngleIndex = middle_placement + countIndex;
 
 
-                legpointf[0].setX(400 + temx/4.0);
-                legpointf[0].setY(600 + temy/4.0);
-                break;
-            }
-        }
+
+
+        int i_count;
+         bool flag = false; //判断第一个位置的数据是否进来
+         for (i_count = middle_placement; i_count >= cal_startAngleIndex; i_count--)    //7CM的物体在110cm的距离将会扫到的数据：arctan(7/110)*delta = 21.8，即将会有21条光线打到此物体上
+         {
+             int j_count = 0;
+             while (j_count <= 25)
+             {
+                 if ((abs(pointlengthX[i_count] - pointlengthX[i_count - j_count]) > 80) || (abs(pointlengthY[i_count] - pointlengthY[i_count - j_count]) > 80))//获取Y轴方向上的切割位置
+                 {
+                     break;
+                 }
+                 j_count++;
+             }
+
+             int sumX = 0;
+             int sumY = 0;
+             QPoint identifyPoint;
+             int r = 8;
+             if (j_count > 4)    //如果扫描的数量在10个以上，物体的宽度需要达到3cm才会认为检测到。
+             {
+                 if (pointlengthY[i_count] < detectlength&&
+                     pointlengthY[i_count] < detectlength>(detectlength-500))
+                 {
+                     for (int cnt = 0; cnt < j_count; cnt++)
+                     {
+                         sumX = sumX + (int)pointlengthX[i_count - cnt];
+                         sumY = sumY + (int)pointlengthY[i_count - cnt];
+                     }
+                     identifyPoint.setX(sumX / (j_count));
+                     identifyPoint.setY(sumY / (j_count));
+                     if(flag == false)
+                     {
+                         actuallegpointf[0] = identifyPoint;
+                         flag = true;
+//                         PaintVar.g.DrawEllipse(PaintVar.Green_pen, PaintVar.halfWidth + identifyPoint.X * addsd - r, PaintVar.halfHeight - identifyPoint.Y * addsd - r, r * 2, r * 2);
+                     }
+                 }
+
+             }
+             i_count = i_count - j_count;
+         }
+
+         flag = false;
+         for (i_count = middle_placement; i_count <= cal_endAngleIndex; i_count++)    //7CM的物体在110cm的距离将会扫到的数据：arctan(7/110)*delta = 21.8，即将会有21条光线打到此物体上
+         {
+             int j_count = 0;
+             while (j_count <= 25)
+             {
+                 if ((abs(pointlengthX[i_count] -pointlengthX[i_count + j_count]) > 80) || (abs(pointlengthY[i_count] - pointlengthY[i_count + j_count]) > 80))//获取Y轴方向上的切割位置
+                 {
+                     break;
+                 }
+                 j_count++;
+             }
+
+             int sumX = 0;
+             int sumY = 0;
+             QPoint identifyPoint;
+             int r = 8;
+             if (j_count > 4)    //如果扫描的数量在10个以上，物体的宽度需要达到3cm才会认为检测到。
+             {
+                 if (pointlengthY[i_count] < detectlength&&
+                     pointlengthY[i_count] < detectlength>(detectlength-500))
+                 {
+                     for (int cnt = 0; cnt < j_count; cnt++)
+                     {
+                         sumX = sumX + (int)pointlengthX[i_count + cnt];
+                         sumY = sumY + (int)pointlengthY[i_count + cnt];
+                     }
+                     identifyPoint.setX(sumX / (j_count));
+                     identifyPoint.setY(sumY / (j_count));
+                     if (flag == false)
+                     {
+                         actuallegpointf[1] = identifyPoint;
+                         flag = true;
+//                         PaintVar.g.DrawEllipse(PaintVar.Green_pen, PaintVar.halfWidth + identifyPoint.X * addsd - r, PaintVar.halfHeight - identifyPoint.Y * addsd - r, r * 2, r * 2);
+                     }
+                 }
+
+             }
+             i_count = i_count + j_count;
+         }
+
+
+        //left point
+        legpointf[0].setX(400 + actuallegpointf[0].x()/4.0);
+        legpointf[0].setY(600 + actuallegpointf[0].y()/4.0);
 
         //right point
-        for( int i = 404 ; i> 404-count ; i-=1 )
-        {
-            if(tmp->at(i).second * sin((tmp->at(i).first+pos_angle1)*PI/180.0) < detectlength&&
-                    tmp->at(i).second * sin((tmp->at(i).first+pos_angle1)*PI/180.0) > (detectlength-500))
-            {
-                temx = tmp->at(i).second * cos((-tmp->at(i).first+pos_angle1)*PI/180.0)+pos_x1;
-                temy = tmp->at(i).second * sin((-tmp->at(i).first+pos_angle1)*PI/180.0)+pos_y1;
-
-
-                ui->right1_X->setText(QString::number(temx));
-                ui->right1_Y->setText(QString::number(-temy));
-
-                legpointf[1].setX(400 + temx/4.0);
-                legpointf[1].setY(600 + temy/4.0);
-                break;
-            }
-        }
-
+        legpointf[1].setX(400 + actuallegpointf[1].x()/4.0);
+        legpointf[1].setY(600 + actuallegpointf[1].y()/4.0);
 
         emit draw_leg_point(legpointf);
 

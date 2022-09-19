@@ -93,7 +93,7 @@ void TIM561::updatemeandate()
             }
 
             float current_angle = -45;
-            if(currentScan.part.size()==843)
+            if(currentScan.part.size()==TOTAL_NUMBER)
             {
                 for( int i = 0 ; i < NBR_DATA ; i++ )
                 {
@@ -126,7 +126,7 @@ void TIM561::updatemeandate()
                     currentScan.part.push_back(tmp);
                 }
                 float current_angle = -45;
-                if(currentScan.part.size()==843)
+                if(currentScan.part.size()==TOTAL_NUMBER)
                 {
                     for( int i = 0 ; i < NBR_DATA ; i++ )
                     {
