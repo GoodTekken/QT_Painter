@@ -93,6 +93,8 @@ public:
     */
     void update();
 
+    void updatemeandate();
+
     /**
     * \public
     * \fn const std::vector<DataPoint>& TIM561::getDataPoints() const
