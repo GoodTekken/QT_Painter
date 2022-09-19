@@ -498,7 +498,7 @@ void Painter::on_disconnect_clicked()
 void Painter::showTimData(const QPointF* points)
 {
 //    ui->paint_area->earseImage();
-    ui->paint_area->drawTimPoints(points,808);
+    ui->paint_area->drawTimPoints(points,TIM561::NBR_DATA);
 }
 
 void Painter::showTimLeg(const QPointF* points)
@@ -511,7 +511,7 @@ void Painter::p_drawLine()
 {
     if(connect_flag == true)
     {
-        QPointF pointf[808];
+        QPointF pointf[TIM561::NBR_DATA];
         int temx;
         int temy;
         auto tmp = tim.getDataPoints();
@@ -588,7 +588,7 @@ void Painter::p_manual_drawLine(const std::vector<std::pair<float, uint16_t>> *t
 {
     if(connect_flag == true)
     {
-        QPointF pointf[808];
+        QPointF pointf[TIM561::NBR_DATA];
         int temx;
         int temy;
 //        auto tmp = tim.getDataPoints();

@@ -65,11 +65,6 @@ uint32_t TelegramScan::getMesFreq() const
     return std::stoul(part[MES_FREQ],nullptr,16);
 }
 
-const std::string& TelegramScan::getContent() const
-{
-    return part[CONTENT];
-}
-
 float TelegramScan::getScaleFactor() const
 {
     uint32_t tmp = std::stoul(part[SCALE_FACTOR],nullptr,16);
@@ -80,14 +75,4 @@ float TelegramScan::getScaleFactor() const
 uint32_t TelegramScan::getStartAngle() const
 {
     return std::stoul(part[START_ANGLE],nullptr,16);
-}
-
-uint16_t TelegramScan::getAngularStep() const
-{
-    return std::stoul(part[ANGULAR_STEP,nullptr,16]);
-}
-
-uint16_t TelegramScan::getAmountData() const
-{
-    return std::stoul(part[AMOUNT_DATA],nullptr,16);
 }

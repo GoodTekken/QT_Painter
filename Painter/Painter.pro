@@ -4,6 +4,7 @@
 
 QT += printsupport
 QT += widgets
+#QT += core
 TEMPLATE = app
 TARGET = Painter
 INCLUDEPATH += .
@@ -11,11 +12,14 @@ INCLUDEPATH += .
 # Input
 HEADERS += colorbox.h paintarea.h painter.h resizedialog.h \
     basic_com/TelegramScan.h \
-    lidar/TIM561.h
+    lidar/TIM561.h \
+    math/mathStruct.h \
+    math/usermath.h
 FORMS += painter.ui resizedialog.ui
 SOURCES += colorbox.cpp main.cpp paintarea.cpp painter.cpp resizedialog.cpp \
     basic_com/TelegramScan.cpp \
-    lidar/TIM561.cpp
+    lidar/TIM561.cpp \
+    math/usermath.cpp
 RESOURCES += Image.qrc
 
 DISTFILES += \

@@ -71,7 +71,7 @@ void TIM561::updateDataPoints()
 
 void TIM561::updatemeandate()
 {
-    int count = 4;
+    int count = 1;
 
     //Initialization
     if( write(CONTINUOUS_MEASURE) )
@@ -85,18 +85,25 @@ void TIM561::updatemeandate()
             std::string tmp;
             currentScan.part.clear();
             /*get all data separated with space char independently */
+            int count = 0;
             while (std::getline(stream, tmp, ' '))
             {
                 currentScan.part.push_back(tmp);
+                count++;
             }
+
             float current_angle = -45;
-            for( int i = 0 ; i < NBR_DATA ; i++ )
+            if(currentScan.part.size()==843)
             {
-                /*stoul converts hex string to real hex int*/
-                currentDataPoints[i].second = std::stoul(currentScan.part[i+TelegramScan::ID::DATA_1],nullptr,16);
-                currentDataPoints[i].first = current_angle;
-                current_angle+=STEP_ANGLE;
+                for( int i = 0 ; i < NBR_DATA ; i++ )
+                {
+                    /*stoul converts hex string to real hex int*/
+                    currentDataPoints[i].second = std::stoul(currentScan.part[i+TelegramScan::ID::DATA_1],nullptr,16);
+                    currentDataPoints[i].first = current_angle;
+                    current_angle+=STEP_ANGLE;
+                }
             }
+
         }
     }
 
@@ -119,15 +126,19 @@ void TIM561::updatemeandate()
                     currentScan.part.push_back(tmp);
                 }
                 float current_angle = -45;
-                for( int i = 0 ; i < NBR_DATA ; i++ )
+                if(currentScan.part.size()==843)
                 {
-                    /*stoul converts hex string to real hex int*/
-                    currentDataPoints[i].second += std::stoul(currentScan.part[i+TelegramScan::ID::DATA_1],nullptr,16);
-                    currentDataPoints[i].first += current_angle;
-                    current_angle+=STEP_ANGLE;
+                    for( int i = 0 ; i < NBR_DATA ; i++ )
+                    {
+                        /*stoul converts hex string to real hex int*/
+                        currentDataPoints[i].second += std::stoul(currentScan.part[i+TelegramScan::ID::DATA_1],nullptr,16);
+                        currentDataPoints[i].first += current_angle;
+                        current_angle+=STEP_ANGLE;
+                    }
                 }
             }
         }
+//        usleep(20000); //20ms
     }
 
 

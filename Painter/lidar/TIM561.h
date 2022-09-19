@@ -31,7 +31,7 @@ public:
     * \public
     * \brief Number of data received
     */
-    constexpr static uint16_t NBR_DATA             = 808;
+    constexpr static uint16_t NBR_DATA             = 811;  //808
 
     /**
     * \public
@@ -109,7 +109,7 @@ public:
     * \public
     * \brief The number of steps between -45 degrees and 225 degrees
     */
-    constexpr static const float STEP_ANGLE        = 0.3345719;
+    constexpr static const float STEP_ANGLE        = 0.333333;// 0.3345719
 
 
 
