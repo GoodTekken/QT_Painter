@@ -9,6 +9,7 @@
 #include <QFontDialog>
 #include <QPalette>
 #include "lidar/TIM561.h"
+#include "math/usermath.h"
 
 #define PI 3.14159265
 
@@ -518,7 +519,7 @@ void Painter::p_drawLine()
         int temx;
         int temy;
         auto tmp = tim.getDataPoints();
-        int length = 0;
+        float scale = 4.0;
 
         float pos_x1 = ui->pos1_X->text().toFloat();
         float pos_y1 = ui->pos1_Y->text().toFloat();
@@ -526,20 +527,21 @@ void Painter::p_drawLine()
 
         for( int i = 0 ; i< TIM561::NBR_DATA ; i+=1 )
         {
-            temx = tmp->at(i).second * cos((-tmp->at(i).first+pos_angle1)*PI/180.0)+pos_x1;
-            temy = tmp->at(i).second * sin((-tmp->at(i).first+pos_angle1)*PI/180.0)+pos_y1;
+            temx = tmp->at(i).second * cos((tmp->at(i).first+pos_angle1)*PI/180.0)+pos_x1;
+            temy = tmp->at(i).second * sin((tmp->at(i).first+pos_angle1)*PI/180.0)+pos_y1;
 
-            pointlengthX[i]= (int)(-temx);
-            pointlengthY[i]= (int)(-temy);
+            pointlengthX[i]= (int)(temx);
+            pointlengthY[i]= (int)(temy);
 
-            pointfToPaint[i].setX(400 + temx/4.0);
-            pointfToPaint[i].setY(600 + temy/4.0);
+            pointfToPaint[i].setX(400 + temx/scale);
+            pointfToPaint[i].setY(600 - temy/scale);
         }
         emit tranferTimData(pointfToPaint);
 
         QPointF legpointf[2];
-        QPointF actuallegpointf[2];
-        //left point
+        QPoint actuallegpoint[2];
+
+
 
         float theta = atan((ui->detect_width->text().toFloat()/2.0+200)/ui->detect_length->text().toFloat())*180/PI;
         int countIndex = theta*3;
@@ -550,7 +552,7 @@ void Painter::p_drawLine()
 
 
 
-
+        //right point
         int i_count;
          bool flag = false; //判断第一个位置的数据是否进来
          for (i_count = middle_placement; i_count >= cal_startAngleIndex; i_count--)    //7CM的物体在110cm的距离将会扫到的数据：arctan(7/110)*delta = 21.8，即将会有21条光线打到此物体上
@@ -572,7 +574,7 @@ void Painter::p_drawLine()
              if (j_count > 4)    //如果扫描的数量在10个以上，物体的宽度需要达到3cm才会认为检测到。
              {
                  if (pointlengthY[i_count] < detectlength&&
-                     pointlengthY[i_count] < detectlength>(detectlength-500))
+                     pointlengthY[i_count] > (detectlength-500))
                  {
                      for (int cnt = 0; cnt < j_count; cnt++)
                      {
@@ -583,7 +585,7 @@ void Painter::p_drawLine()
                      identifyPoint.setY(sumY / (j_count));
                      if(flag == false)
                      {
-                         actuallegpointf[0] = identifyPoint;
+                         actuallegpoint[0] = identifyPoint;
                          flag = true;
 //                         PaintVar.g.DrawEllipse(PaintVar.Green_pen, PaintVar.halfWidth + identifyPoint.X * addsd - r, PaintVar.halfHeight - identifyPoint.Y * addsd - r, r * 2, r * 2);
                      }
@@ -593,6 +595,7 @@ void Painter::p_drawLine()
              i_count = i_count - j_count;
          }
 
+         //left point
          flag = false;
          for (i_count = middle_placement; i_count <= cal_endAngleIndex; i_count++)    //7CM的物体在110cm的距离将会扫到的数据：arctan(7/110)*delta = 21.8，即将会有21条光线打到此物体上
          {
@@ -613,7 +616,7 @@ void Painter::p_drawLine()
              if (j_count > 4)    //如果扫描的数量在10个以上，物体的宽度需要达到3cm才会认为检测到。
              {
                  if (pointlengthY[i_count] < detectlength&&
-                     pointlengthY[i_count] < detectlength>(detectlength-500))
+                     pointlengthY[i_count] > (detectlength-500))
                  {
                      for (int cnt = 0; cnt < j_count; cnt++)
                      {
@@ -624,7 +627,7 @@ void Painter::p_drawLine()
                      identifyPoint.setY(sumY / (j_count));
                      if (flag == false)
                      {
-                         actuallegpointf[1] = identifyPoint;
+                         actuallegpoint[1] = identifyPoint;
                          flag = true;
 //                         PaintVar.g.DrawEllipse(PaintVar.Green_pen, PaintVar.halfWidth + identifyPoint.X * addsd - r, PaintVar.halfHeight - identifyPoint.Y * addsd - r, r * 2, r * 2);
                      }
@@ -634,17 +637,25 @@ void Painter::p_drawLine()
              i_count = i_count + j_count;
          }
 
-
-        //left point
-        legpointf[0].setX(400 + actuallegpointf[0].x()/4.0);
-        legpointf[0].setY(600 + actuallegpointf[0].y()/4.0);
-
-        //right point
-        legpointf[1].setX(400 + actuallegpointf[1].x()/4.0);
-        legpointf[1].setY(600 + actuallegpointf[1].y()/4.0);
-
-        emit draw_leg_point(legpointf);
-
+        QPoint orignal(0,0);
+        if(UserMath::GetDiatanceBetweenPoint(orignal,actuallegpoint[0])>0&&
+           UserMath::GetDiatanceBetweenPoint(orignal,actuallegpoint[1])>0&&
+           UserMath::GetDiatanceBetweenPoint(actuallegpoint[0],actuallegpoint[1])>500)
+        {
+            //right point
+            legpointf[0].setX(400 + actuallegpoint[0].x()/scale);
+            legpointf[0].setY(600 - actuallegpoint[0].y()/scale);
+            //left point
+            legpointf[1].setX(400 + actuallegpoint[1].x()/scale);
+            legpointf[1].setY(600 - actuallegpoint[1].y()/scale);
+            //show
+            ui->right1_X->setText(QString::number(actuallegpoint[0].x()));
+            ui->right1_Y->setText(QString::number(actuallegpoint[0].y()));
+            ui->left1_X->setText(QString::number(actuallegpoint[1].x()));
+            ui->left1_Y->setText(QString::number(actuallegpoint[1].y()));
+            //draw
+            emit draw_leg_point(legpointf);
+        }
     }
 }
 
