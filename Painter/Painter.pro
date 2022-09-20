@@ -23,4 +23,5 @@ SOURCES += colorbox.cpp main.cpp paintarea.cpp painter.cpp resizedialog.cpp \
 RESOURCES += Image.qrc
 
 DISTFILES += \
-    Record_20220916
+    Record_20220916 \
+    Record_20220920

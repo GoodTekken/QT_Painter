@@ -61,15 +61,24 @@ struct TelegramScan
     uint16_t getVersion() const;
     uint16_t getDeviceNumber() const;
     uint32_t getSerialNumber() const;
-    uint8_t  getDeviceStatus() const;
+    uint16_t getDeviceStatus() const;
     uint16_t getTelegramCounter() const;
     uint16_t getScanCounter() const;
     uint32_t getTimeSinceStartup() const;
     uint32_t getTimeTransmission() const;
+
+    uint16_t getInputStatus()const;
+    uint16_t getOutputStatus()const;
     uint32_t getScanFreq() const;
     uint32_t getMesFreq() const;
-    float    getScaleFactor() const;
+    uint16_t getCodeOutput()const;
+    const std::string& getNumOutput()const;
+
+    uint32_t getConvFactor() const;
+    uint32_t getConvOffset() const;
     uint32_t getStartAngle() const;
+    float    getScaleFactor() const;
+    uint16_t getCount() const;
 };
 
 #endif //TIM561_TELEGRAM_H

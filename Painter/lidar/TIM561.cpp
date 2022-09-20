@@ -67,6 +67,28 @@ void TIM561::updateDataPoints()
         currentDataPoints[i].first = current_angle;
         current_angle+=STEP_ANGLE;
     }
+
+//    TelegramScan telegram;
+//    telegram.part = currentScan.part;
+//    std::cout<<"getDeviceNumber()"<<telegram.getDeviceNumber()<<std::endl;
+//    std::cout<<"getSerialNumber()"<<telegram.getSerialNumber()<<std::endl;
+//    std::cout<<"getDeviceStatus()"<<telegram.getDeviceStatus()<<std::endl;
+//    std::cout<<"getTelegramCounter()"<<telegram.getTelegramCounter()<<std::endl;
+//    std::cout<<"getScanCounter()"<<telegram.getScanCounter()<<std::endl;
+//    std::cout<<"getTimeSinceStartup()"<<telegram.getTimeSinceStartup()<<std::endl;
+//    std::cout<<"getSerialNumber()"<<telegram.getSerialNumber()<<std::endl;
+//    std::cout<<"getTimeTransmission()"<<telegram.getTimeTransmission()<<std::endl;
+//    std::cout<<"getInputStatus()"<<telegram.getInputStatus()<<std::endl;
+//    std::cout<<"getOutputStatus()"<<telegram.getOutputStatus()<<std::endl;
+//    std::cout<<"getScanFreq()"<<telegram.getScanFreq()<<std::endl;
+//    std::cout<<"getMesFreq()"<<telegram.getMesFreq()<<std::endl;
+//    std::cout<<"getCodeOutput()"<<telegram.getCodeOutput()<<std::endl;
+//    std::cout<<"getNumOutput()"<<telegram.getNumOutput()<<std::endl;
+//    std::cout<<"getConvFactor()"<<telegram.getConvFactor()<<std::endl;
+//    std::cout<<"getConvOffset()"<<telegram.getConvOffset()<<std::endl;
+//    std::cout<<"getStartAngle()"<<telegram.getStartAngle()<<std::endl;
+//    std::cout<<"getScaleFactor()"<<telegram.getScaleFactor()<<std::endl;
+//    std::cout<<"getCount()"<<telegram.getCount()<<std::endl;
 }
 
 void TIM561::updatemeandate()
