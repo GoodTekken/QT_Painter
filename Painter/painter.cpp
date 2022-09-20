@@ -10,6 +10,7 @@
 #include <QPalette>
 #include "lidar/TIM561.h"
 #include "math/usermath.h"
+//#include <math.h>
 
 #define PI 3.14159265
 
@@ -59,6 +60,10 @@ Painter::Painter(QWidget *parent) : QMainWindow(parent), ui(new Ui::Painter)
     ui->spray_string->installEventFilter(this);
     mytimer = new QTimer(this);
     connect(mytimer, SIGNAL(timeout()), this, SLOT(p_drawLine()));
+
+    mytimer_draw = new QTimer(this);
+    connect(mytimer_draw, SIGNAL(timeout()), this, SLOT(p_drawLine_Leg()));
+
     connect(this, SIGNAL(manualTrigger(const std::vector<std::pair<float, uint16_t>>*)), this, SLOT(p_manual_drawLine(const std::vector<std::pair<float, uint16_t>>*)));
     connect(this, SIGNAL(manualTriggerUp(const std::vector<std::pair<float, uint16_t>>*)), this, SLOT(p_manual_drawLineUp(const std::vector<std::pair<float, uint16_t>>*)));
 }
@@ -174,16 +179,16 @@ void Painter::New_File()
     ui->scrollAreaWidgetContents->setGeometry(0, 0, 418, 318);
     Resize();
 
-    ui->detect_length->setText("1200");
+    ui->detect_length->setText("1600");
     ui->detect_width->setText("1300");
     ui->rack_length->setText("1000");
     ui->rack_width->setText("1000");
     ui->pos1_X->setText("0");
     ui->pos1_Y->setText("0");
     ui->pos1_angle->setText("0");
-    ui->pos2_X->setText("0");
-    ui->pos2_Y->setText("0");
-    ui->pos2_angle->setText("0");
+    ui->pos2_X->setText("52");
+    ui->pos2_Y->setText("-172");
+    ui->pos2_angle->setText("0.6");
 
 }
 
@@ -436,7 +441,7 @@ void *p_connect_Tim561(void *arg)
 {
     connect_flag = true;
     std::cout << "Connection..." << std::endl;
-    if( tim.connect("192.168.0.72",2112))
+    if( tim.connect("192.168.0.71",2112))
     {
         std::cout << "Connected" << std::endl;
         if( tim.start() )
@@ -751,9 +756,9 @@ void Painter::p_manual_drawLineUp(const std::vector<std::pair<float, uint16_t>>*
         int pointlengthY[TIM561::NBR_DATA];
 //        auto tmp = tim.getDataPoints();
 
-        float pos_x1 = ui->pos1_X->text().toFloat();
-        float pos_y1 = ui->pos1_Y->text().toFloat();
-        float pos_angle1 = ui->pos1_angle->text().toFloat();
+        float pos_x1 = ui->pos2_X->text().toFloat();
+        float pos_y1 = ui->pos2_Y->text().toFloat();
+        float pos_angle1 = ui->pos2_angle->text().toFloat();
 
         int temx;
         int temy;
@@ -807,57 +812,30 @@ void Painter::p_manual_drawLineUp(const std::vector<std::pair<float, uint16_t>>*
 }
 void Painter::on_drawLine_clicked()
 {
-//    QPoint startPoint(0,0);
-//    QPoint endPoint(100,100);
-//    ui->paint_area->drawTimLine(startPoint,endPoint);
-//    pthread_t tidp;
-//    int ret;
-//    ret = pthread_create(&tidp,NULL,p_drawLine,NULL);
-//    if(ret)
-//    {
-//        printf("p_drawLine failed:%d\n",ret);
-//    }
-//    else
-//    {
-//        printf("p_drawLine success\n");
-//    }
-//    void *arg;
-//    p_drawLine(arg);
     if(mytimer->isActive()==false)
     {
         mytimer->start(100);  //100ms
+    }
+    else
+    {
+        mytimer->stop();
     }
 }
 
 void *Painter::p_test_Tim561(void *arg)
 {
-//    connect_flag = true;
-//    if( tim.connect("192.168.0.72",2112))
-//    {
-//        std::cout << "Connected" << std::endl;
-//        if( tim.start() )
-//        {
-//            std::cout << "Started" << std::endl;
-//            tim.update();
-//            auto tmp = tim.getDataPoints();
-//            emit this->manualTrigger(tmp);
-//        }
-//    }
+    ;
 }
 
-void Painter::on_Test_Button_clicked()
+void Painter::p_drawLine_Leg()
 {
-//    pthread_t tidp;
-//    int ret;
-//    ret = pthread_create(&tidp,NULL,p_test_Tim561,this);
-//    if(ret)
-//    {
-//        printf("disconnect Tim561 failed:%d\n",ret);
-//    }
-//    else
-//    {
-//        printf("disconnect Tim561 success\n");
-//    }
+    clean_count++;
+    if(clean_count>5)
+    {
+         ui->paint_area->clearImage();
+        clean_count=0;
+    }
+
     connect_flag = true;
     if( tim.connect("192.168.0.71",2112))
     {
@@ -867,7 +845,7 @@ void Painter::on_Test_Button_clicked()
             std::cout << "Started" << std::endl;
             tim.update();
             auto tmp = tim.getDataPoints();
-            emit this->manualTrigger(tmp);
+            emit this->manualTrigger(tmp); //blue
         }
     }
     tim.close();
@@ -880,9 +858,64 @@ void Painter::on_Test_Button_clicked()
             std::cout << "Started" << std::endl;
             tim.update();
             auto tmp = tim.getDataPoints();
-            emit this->manualTriggerUp(tmp);
+            emit this->manualTriggerUp(tmp);  //green
         }
     }
     tim.close();
+    float temp1,temp2,temp3;
+    temp1=ui->ref1_x->text().toFloat() - ui->ref2_x->text().toFloat();
+    ui->delta_x->setText(QString::number(temp1));
+    temp2=ui->ref1_y->text().toFloat() - ui->ref2_y->text().toFloat();
+    ui->delta_y->setText(QString::number(temp2));
+    temp3=ui->ref1_angle->text().toFloat() - ui->ref2_angle->text().toFloat();
+    ui->delta_angle->setText(QString::number(temp3,'f',2));
+
+    QPalette palette = ui->success_edit->palette();
+    if(abs(temp1)<15&&abs(temp2)<15&&abs(temp3)<1)
+    {
+        palette.setColor(QPalette::Base,Qt::green);
+        ui->success_edit->setPalette(palette);
+    }
+    else
+    {
+        palette.setColor(QPalette::Base,Qt::red);
+        ui->success_edit->setPalette(palette);
+    }
 }
 
+void Painter::on_Test_Button_clicked()
+{
+    if(mytimer_draw->isActive()==false)
+    {
+        mytimer_draw->start(300);  //100ms
+    }
+    else
+    {
+        mytimer_draw->stop();
+    }
+}
+
+//    connect_flag = true;
+//    if( tim.connect("192.168.0.72",2112))
+//    {
+//        std::cout << "Connected" << std::endl;
+//        if( tim.start() )
+//        {
+//            std::cout << "Started" << std::endl;
+//            tim.update();
+//            auto tmp = tim.getDataPoints();
+//            emit this->manualTrigger(tmp);
+//        }
+//    }
+
+//    pthread_t tidp;
+//    int ret;
+//    ret = pthread_create(&tidp,NULL,p_test_Tim561,this);
+//    if(ret)
+//    {
+//        printf("disconnect Tim561 failed:%d\n",ret);
+//    }
+//    else
+//    {
+//        printf("disconnect Tim561 success\n");
+//    }

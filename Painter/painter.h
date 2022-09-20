@@ -118,6 +118,7 @@ private slots:
     QList<QPoint> cal_leg(int pointlengthX[],int pointlengthY[]);
 
     void p_drawLine();
+    void p_drawLine_Leg();
 
     void p_manual_drawLine(const std::vector<std::pair<float, uint16_t>>*);
     void p_manual_drawLineUp(const std::vector<std::pair<float, uint16_t>>*);
@@ -137,7 +138,9 @@ private:
     QFont _font;
 
     QTimer *mytimer;
+    QTimer *mytimer_draw;
     float scale = 4.0;
+    int clean_count =0;
 
 };
 

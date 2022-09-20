@@ -52,9 +52,9 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>100</y>
+        <y>10</y>
         <width>791</width>
-        <height>701</height>
+        <height>791</height>
        </rect>
       </property>
       <property name="sizePolicy">
@@ -1144,6 +1144,9 @@
            <widget class="QLineEdit" name="delta_angle"/>
           </item>
          </layout>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="success_edit"/>
         </item>
         <item>
          <spacer name="verticalSpacer">
