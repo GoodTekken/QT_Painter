@@ -648,6 +648,11 @@ void Painter::p_drawLine()
             //left point
             legpointf[1].setX(400 + actuallegpoint[1].x()/scale);
             legpointf[1].setY(600 - actuallegpoint[1].y()/scale);
+            //reference point
+            DirectionPoint middleReference = UserMath::GetMiddleReferentPoint(actuallegpoint[0],actuallegpoint[1]);
+            ui->ref1_x->setText(QString::number(middleReference.point.x()));
+            ui->ref1_y->setText(QString::number(middleReference.point.y()));
+            ui->ref1_angle->setText(QString::number(middleReference.angle,'f',2));
             //show
             ui->right1_X->setText(QString::number(actuallegpoint[0].x()));
             ui->right1_Y->setText(QString::number(actuallegpoint[0].y()));

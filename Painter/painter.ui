@@ -51,8 +51,8 @@
      <widget class="PaintArea" name="paint_area" native="true">
       <property name="geometry">
        <rect>
-        <x>-10</x>
-        <y>-30</y>
+        <x>0</x>
+        <y>100</y>
         <width>791</width>
         <height>701</height>
        </rect>
@@ -267,6 +267,19 @@
          </layout>
         </item>
         <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_25">
+          <item>
+           <widget class="QLineEdit" name="ref1_x"/>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="ref1_y"/>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="ref1_angle"/>
+          </item>
+         </layout>
+        </item>
+        <item>
          <widget class="QLabel" name="label_10">
           <property name="text">
            <string>Camera2_top_72</string>
@@ -360,6 +373,19 @@
           </item>
           <item>
            <widget class="QLineEdit" name="right2_y"/>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_26">
+          <item>
+           <widget class="QLineEdit" name="ref2_x"/>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="ref2_y"/>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="ref2_angle"/>
           </item>
          </layout>
         </item>
@@ -1096,6 +1122,26 @@
              </layout>
             </item>
            </layout>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_20">
+          <property name="text">
+           <string>Camera2-Camera1</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_27">
+          <item>
+           <widget class="QLineEdit" name="delta_x"/>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="delta_y"/>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="delta_angle"/>
           </item>
          </layout>
         </item>

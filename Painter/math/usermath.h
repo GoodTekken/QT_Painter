@@ -319,6 +319,21 @@ public:
         directionPoint.angle = a.angle;
         return directionPoint;
     }
+
+    /// <summary>
+    /// 获取middle参考点的坐标和方向
+    /// </summary>
+    /// <param name="startPoint"></param>
+    /// <param name="endPoint"></param>
+    /// <returns></returns>
+    static DirectionPoint GetMiddleReferentPoint(QPoint startPoint, QPoint endPoint)
+    {
+        DirectionPoint directionPoint;
+        line_struct a = TwoPointToLine(startPoint, endPoint);
+        directionPoint.point = GetMiddlePoint(startPoint,endPoint);
+        directionPoint.angle = a.angle;
+        return directionPoint;
+    }
 };
 
 
