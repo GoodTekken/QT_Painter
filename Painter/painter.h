@@ -21,7 +21,8 @@ public:
 
 signals:
     void tranferTimData(const QPointF* points);
-    void draw_leg_point(const QPointF* points);
+    void draw_leg_blue_point(const QPointF* points);
+    void draw_leg_green_point(const QPointF* points);
     void manualTrigger(const std::vector<std::pair<float, uint16_t>>*);
 
     
@@ -110,7 +111,10 @@ private slots:
 
     void showTimData(const QPointF* points);
 
-    void showTimLeg(const QPointF* points);
+    void showTimBlueLeg(const QPointF* points);
+    void showTimGreenLeg(const QPointF* points);
+
+    QList<QPoint> cal_leg(int pointlengthX[],int pointlengthY[]);
 
     void p_drawLine();
 
