@@ -24,6 +24,7 @@ signals:
     void draw_leg_blue_point(const QPointF* points);
     void draw_leg_green_point(const QPointF* points);
     void manualTrigger(const std::vector<std::pair<float, uint16_t>>*);
+    void manualTriggerUp(const std::vector<std::pair<float, uint16_t>>*);
 
     
 private slots:
@@ -119,6 +120,7 @@ private slots:
     void p_drawLine();
 
     void p_manual_drawLine(const std::vector<std::pair<float, uint16_t>>*);
+    void p_manual_drawLineUp(const std::vector<std::pair<float, uint16_t>>*);
 
     void on_Test_Button_clicked();
 
@@ -135,6 +137,7 @@ private:
     QFont _font;
 
     QTimer *mytimer;
+    float scale = 4.0;
 
 };
 

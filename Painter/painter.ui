@@ -372,7 +372,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="right2_y"/>
+           <widget class="QLineEdit" name="right2_Y"/>
           </item>
          </layout>
         </item>

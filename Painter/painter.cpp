@@ -60,6 +60,7 @@ Painter::Painter(QWidget *parent) : QMainWindow(parent), ui(new Ui::Painter)
     mytimer = new QTimer(this);
     connect(mytimer, SIGNAL(timeout()), this, SLOT(p_drawLine()));
     connect(this, SIGNAL(manualTrigger(const std::vector<std::pair<float, uint16_t>>*)), this, SLOT(p_manual_drawLine(const std::vector<std::pair<float, uint16_t>>*)));
+    connect(this, SIGNAL(manualTriggerUp(const std::vector<std::pair<float, uint16_t>>*)), this, SLOT(p_manual_drawLineUp(const std::vector<std::pair<float, uint16_t>>*)));
 }
 
 Painter::~Painter()
@@ -620,8 +621,6 @@ void Painter::p_drawLine()
 {
     if(connect_flag == true)
     {
-        float scale = 4.0;
-
         int pointlengthX[TIM561::NBR_DATA];
         int pointlengthY[TIM561::NBR_DATA];
         auto tmp = tim.getDataPoints();
@@ -681,81 +680,130 @@ void Painter::p_drawLine()
      }
 }
 
-void Painter::p_manual_drawLine(const std::vector<std::pair<float, uint16_t>> *tmp)
+void Painter::p_manual_drawLine(const std::vector<std::pair<float, uint16_t>>* tmp)
 {
     if(connect_flag == true)
     {
-        QPointF pointf[TIM561::NBR_DATA];
-        int temx;
-        int temy;
+        int pointlengthX[TIM561::NBR_DATA];
+        int pointlengthY[TIM561::NBR_DATA];
 //        auto tmp = tim.getDataPoints();
-        int length = 0;
 
         float pos_x1 = ui->pos1_X->text().toFloat();
         float pos_y1 = ui->pos1_Y->text().toFloat();
         float pos_angle1 = ui->pos1_angle->text().toFloat();
 
+        int temx;
+        int temy;
+        QPointF pointfToPaint[TIM561::NBR_DATA];
         for( int i = 0 ; i< TIM561::NBR_DATA ; i+=1 )
         {
-//            printf("[%g, %d] ", tmp->at(i).first, tmp->at(i).second);
-            length = length +1 ;
-
-            temx = tmp->at(i).second * cos((-tmp->at(i).first+pos_angle1)*PI/180.0)+pos_x1;
-            temy = tmp->at(i).second * sin((-tmp->at(i).first+pos_angle1)*PI/180.0)+pos_y1;
-
-            pointf[i].setX(400 + temx/4.0);
-            pointf[i].setY(600 + temy/4.0);
+            temx = tmp->at(i).second * cos((tmp->at(i).first+pos_angle1)*PI/180.0)+pos_x1;
+            temy = tmp->at(i).second * sin((tmp->at(i).first+pos_angle1)*PI/180.0)+pos_y1;
+            pointlengthX[i]= (int)(temx);
+            pointlengthY[i]= (int)(temy);
+            pointfToPaint[i].setX(400 + temx/scale);
+            pointfToPaint[i].setY(600 - temy/scale);
         }
-        emit tranferTimData(pointf);
+        emit tranferTimData(pointfToPaint);
 
+
+        QList<QPoint> actuallegpoint;
+        actuallegpoint=cal_leg(pointlengthX,pointlengthY);
+
+
+        QPoint orignal(0,0);
         QPointF legpointf[2];
-        //left point
 
-        float theta = atan((ui->detect_width->text().toFloat()/2.0+200)/ui->detect_length->text().toFloat())*180/PI;
-        int count = theta*3;
-        float detectlength = ui->detect_length->text().toFloat()+100;
-
-        for( int i = 404 ; i< 404+count ; i+=1 )
+        if(actuallegpoint.count() ==2)
         {
-            if(tmp->at(i).second * sin((tmp->at(i).first+pos_angle1)*PI/180.0) < detectlength &&
-                tmp->at(i).second * sin((tmp->at(i).first+pos_angle1)*PI/180.0) > (detectlength-500))
+            if(UserMath::GetDiatanceBetweenPoint(orignal,actuallegpoint[0])>0&&
+               UserMath::GetDiatanceBetweenPoint(orignal,actuallegpoint[1])>0&&
+               UserMath::GetDiatanceBetweenPoint(actuallegpoint[0],actuallegpoint[1])>500)
             {
-                temx = tmp->at(i).second * cos((-tmp->at(i).first+pos_angle1)*PI/180.0)+pos_x1;
-                temy = tmp->at(i).second * sin((-tmp->at(i).first+pos_angle1)*PI/180.0)+pos_y1;
-
-                ui->left1_X->setText(QString::number(temx));
-                ui->left1_Y->setText(QString::number(-temy));
-
-
-                legpointf[0].setX(400 + temx/4.0);
-                legpointf[0].setY(600 + temy/4.0);
-                break;
+                //right point
+                legpointf[0].setX(400 + actuallegpoint[0].x()/scale);
+                legpointf[0].setY(600 - actuallegpoint[0].y()/scale);
+                //left point
+                legpointf[1].setX(400 + actuallegpoint[1].x()/scale);
+                legpointf[1].setY(600 - actuallegpoint[1].y()/scale);
+                //reference point
+                DirectionPoint middleReference = UserMath::GetMiddleReferentPoint(actuallegpoint[0],actuallegpoint[1]);
+                ui->ref1_x->setText(QString::number(middleReference.point.x()));
+                ui->ref1_y->setText(QString::number(middleReference.point.y()));
+                ui->ref1_angle->setText(QString::number(middleReference.angle,'f',2));
+                //show
+                ui->right1_X->setText(QString::number(actuallegpoint[0].x()));
+                ui->right1_Y->setText(QString::number(actuallegpoint[0].y()));
+                ui->left1_X->setText(QString::number(actuallegpoint[1].x()));
+                ui->left1_Y->setText(QString::number(actuallegpoint[1].y()));
+                //draw
+                emit draw_leg_blue_point(legpointf);
             }
         }
+     }
+}
 
-        //right point
-        for( int i = 404 ; i> 404-count ; i-=1 )
+void Painter::p_manual_drawLineUp(const std::vector<std::pair<float, uint16_t>>* tmp)
+{
+    if(connect_flag == true)
+    {
+        int pointlengthX[TIM561::NBR_DATA];
+        int pointlengthY[TIM561::NBR_DATA];
+//        auto tmp = tim.getDataPoints();
+
+        float pos_x1 = ui->pos1_X->text().toFloat();
+        float pos_y1 = ui->pos1_Y->text().toFloat();
+        float pos_angle1 = ui->pos1_angle->text().toFloat();
+
+        int temx;
+        int temy;
+        QPointF pointfToPaint[TIM561::NBR_DATA];
+        for( int i = 0 ; i< TIM561::NBR_DATA ; i+=1 )
         {
-            if(tmp->at(i).second * sin((tmp->at(i).first+pos_angle1)*PI/180.0) < detectlength&&
-                    tmp->at(i).second * sin((tmp->at(i).first+pos_angle1)*PI/180.0) > (detectlength-500))
+            temx = tmp->at(i).second * cos((tmp->at(i).first+pos_angle1)*PI/180.0)+pos_x1;
+            temy = tmp->at(i).second * sin((tmp->at(i).first+pos_angle1)*PI/180.0)+pos_y1;
+            pointlengthX[i]= (int)(temx);
+            pointlengthY[i]= (int)(temy);
+            pointfToPaint[i].setX(400 + temx/scale);
+            pointfToPaint[i].setY(600 - temy/scale);
+        }
+        emit tranferTimData(pointfToPaint);
+
+
+        QList<QPoint> actuallegpoint;
+        actuallegpoint=cal_leg(pointlengthX,pointlengthY);
+
+
+        QPoint orignal(0,0);
+        QPointF legpointf[2];
+
+        if(actuallegpoint.count() ==2)
+        {
+            if(UserMath::GetDiatanceBetweenPoint(orignal,actuallegpoint[0])>0&&
+               UserMath::GetDiatanceBetweenPoint(orignal,actuallegpoint[1])>0&&
+               UserMath::GetDiatanceBetweenPoint(actuallegpoint[0],actuallegpoint[1])>500)
             {
-                temx = tmp->at(i).second * cos((-tmp->at(i).first+pos_angle1)*PI/180.0)+pos_x1;
-                temy = tmp->at(i).second * sin((-tmp->at(i).first+pos_angle1)*PI/180.0)+pos_y1;
-
-
-                ui->right1_X->setText(QString::number(temx));
-                ui->right1_Y->setText(QString::number(-temy));
-
-                legpointf[1].setX(400 + temx/4.0);
-                legpointf[1].setY(600 + temy/4.0);
-                break;
+                //right point
+                legpointf[0].setX(400 + actuallegpoint[0].x()/scale);
+                legpointf[0].setY(600 - actuallegpoint[0].y()/scale);
+                //left point
+                legpointf[1].setX(400 + actuallegpoint[1].x()/scale);
+                legpointf[1].setY(600 - actuallegpoint[1].y()/scale);
+                //reference point
+                DirectionPoint middleReference = UserMath::GetMiddleReferentPoint(actuallegpoint[0],actuallegpoint[1]);
+                ui->ref2_x->setText(QString::number(middleReference.point.x()));
+                ui->ref2_y->setText(QString::number(middleReference.point.y()));
+                ui->ref2_angle->setText(QString::number(middleReference.angle,'f',2));
+                //show
+                ui->right2_X->setText(QString::number(actuallegpoint[0].x()));
+                ui->right2_Y->setText(QString::number(actuallegpoint[0].y()));
+                ui->left2_X->setText(QString::number(actuallegpoint[1].x()));
+                ui->left2_Y->setText(QString::number(actuallegpoint[1].y()));
+                //draw
+                emit draw_leg_green_point(legpointf);
             }
         }
-
-
-        emit draw_leg_blue_point(legpointf);
-
-    }
+     }
 }
 void Painter::on_drawLine_clicked()
 {
@@ -832,7 +880,7 @@ void Painter::on_Test_Button_clicked()
             std::cout << "Started" << std::endl;
             tim.update();
             auto tmp = tim.getDataPoints();
-            emit this->manualTrigger(tmp);
+            emit this->manualTriggerUp(tmp);
         }
     }
     tim.close();
