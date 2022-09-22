@@ -179,7 +179,7 @@ void Painter::New_File()
     ui->scrollAreaWidgetContents->setGeometry(0, 0, 418, 318);
     Resize();
 
-    ui->detect_length->setText("1600");
+    ui->detect_length->setText("300");
     ui->detect_width->setText("1300");
     ui->rack_length->setText("1000");
     ui->rack_width->setText("1000");
@@ -541,7 +541,7 @@ QList<QPoint> Painter::cal_leg(int pointlengthX[],int pointlengthY[])
      for (i_count = middle_placement; i_count >= cal_startAngleIndex; i_count--)    //7CM的物体在110cm的距离将会扫到的数据：arctan(7/110)*delta = 21.8，即将会有21条光线打到此物体上
      {
          int j_count = 0;
-         while (j_count <= 25)
+         while (j_count <= 25)  //25
          {
              if ((abs(pointlengthX[i_count] - pointlengthX[i_count - j_count]) > 80) || (abs(pointlengthY[i_count] - pointlengthY[i_count - j_count]) > 80))//获取Y轴方向上的切割位置
              {
@@ -557,7 +557,8 @@ QList<QPoint> Painter::cal_leg(int pointlengthX[],int pointlengthY[])
          if (j_count > 4)    //如果扫描的数量在10个以上，物体的宽度需要达到3cm才会认为检测到。
          {
              if (pointlengthY[i_count] < detectlength&&
-                 pointlengthY[i_count] > (detectlength-500))
+                 pointlengthY[i_count] > (detectlength-500)&&
+                 pointlengthY[i_count]!=0)
              {
                  for (int cnt = 0; cnt < j_count; cnt++)
                  {
@@ -583,7 +584,7 @@ QList<QPoint> Painter::cal_leg(int pointlengthX[],int pointlengthY[])
      for (i_count = middle_placement; i_count <= cal_endAngleIndex; i_count++)    //7CM的物体在110cm的距离将会扫到的数据：arctan(7/110)*delta = 21.8，即将会有21条光线打到此物体上
      {
          int j_count = 0;
-         while (j_count <= 25)
+         while (j_count <= 25) //25
          {
              if ((abs(pointlengthX[i_count] -pointlengthX[i_count + j_count]) > 80) || (abs(pointlengthY[i_count] - pointlengthY[i_count + j_count]) > 80))//获取Y轴方向上的切割位置
              {
@@ -599,7 +600,7 @@ QList<QPoint> Painter::cal_leg(int pointlengthX[],int pointlengthY[])
          if (j_count > 4)    //如果扫描的数量在10个以上，物体的宽度需要达到3cm才会认为检测到。
          {
              if (pointlengthY[i_count] < detectlength&&
-                 pointlengthY[i_count] > (detectlength-500))
+                 pointlengthY[i_count] > 0)
              {
                  for (int cnt = 0; cnt < j_count; cnt++)
                  {
