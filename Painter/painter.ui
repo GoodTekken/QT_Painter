@@ -51,8 +51,8 @@
      <widget class="PaintArea" name="paint_area" native="true">
       <property name="geometry">
        <rect>
-        <x>0</x>
-        <y>10</y>
+        <x>-10</x>
+        <y>100</y>
         <width>791</width>
         <height>791</height>
        </rect>
@@ -1147,6 +1147,25 @@
         </item>
         <item>
          <widget class="QLineEdit" name="success_edit"/>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_28">
+          <item>
+           <widget class="QLineEdit" name="mean_x"/>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="mean_y"/>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="mean_angle">
+            <property name="font">
+             <font>
+              <pointsize>7</pointsize>
+             </font>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
         <item>
          <spacer name="verticalSpacer">

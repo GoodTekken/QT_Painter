@@ -5,6 +5,7 @@
 #include <QtGui>
 #include "resizedialog.h"
 #include <QTimer>
+#include <math/mathStruct.h>
 
 namespace Ui {
 class Painter;
@@ -141,7 +142,8 @@ private:
     QTimer *mytimer_draw;
     float scale = 4.0;
     int clean_count =0;
-
+    int mean_count=0;
+    QList<CoorStruct> result_points;
 };
 
 #endif // PAINTER_H

@@ -527,7 +527,7 @@ QList<QPoint> Painter::cal_leg(int pointlengthX[],int pointlengthY[])
     QList<QPoint> actuallegpoint;
     actuallegpoint.clear();
 
-    float theta = atan((ui->detect_width->text().toFloat()/2.0+200)/ui->detect_length->text().toFloat())*180/PI;
+    float theta = atan((ui->detect_width->text().toFloat()/2.0)/ui->detect_length->text().toFloat())*180/PI+30;
     int countIndex = theta*3;
     float detectlength = ui->detect_length->text().toFloat()+100;
     int middle_placement = (TIM561::NBR_DATA/2) ;
@@ -557,8 +557,8 @@ QList<QPoint> Painter::cal_leg(int pointlengthX[],int pointlengthY[])
          if (j_count > 4)    //如果扫描的数量在10个以上，物体的宽度需要达到3cm才会认为检测到。
          {
              if (pointlengthY[i_count] < detectlength&&
-                 pointlengthY[i_count] > (detectlength-500)&&
-                 pointlengthY[i_count]!=0)
+                 pointlengthY[i_count]>0&&
+                 abs(pointlengthX[i_count])<(ui->detect_width->text().toFloat()/2.0))
              {
                  for (int cnt = 0; cnt < j_count; cnt++)
                  {
@@ -599,8 +599,9 @@ QList<QPoint> Painter::cal_leg(int pointlengthX[],int pointlengthY[])
          int r = 8;
          if (j_count > 4)    //如果扫描的数量在10个以上，物体的宽度需要达到3cm才会认为检测到。
          {
-             if (pointlengthY[i_count] < detectlength&&
-                 pointlengthY[i_count] > 0)
+             if (pointlengthY[i_count] < detectlength &&
+                 pointlengthY[i_count] > 0 &&
+                 abs(pointlengthX[i_count])<(ui->detect_width->text().toFloat()/2.0))
              {
                  for (int cnt = 0; cnt < j_count; cnt++)
                  {
@@ -870,6 +871,51 @@ void Painter::p_drawLine_Leg()
     ui->delta_y->setText(QString::number(temp2));
     temp3=ui->ref1_angle->text().toFloat() - ui->ref2_angle->text().toFloat();
     ui->delta_angle->setText(QString::number(temp3,'f',2));
+
+    CoorStruct temp={ui->delta_x->text().toInt(),ui->delta_y->text().toInt(),ui->delta_angle->text().toFloat()};
+    result_points.append(temp);
+    if(result_points.count()>6)
+    {
+        std::vector<float> angles;
+        angles.clear();
+        for(int i = 0;i<result_points.count();i++)
+        {
+//            qDebug()<<result_points.at(i).x<<" "<<result_points.at(i).y<<" "<<result_points.at(i).angle;
+            angles.push_back(result_points.at(i).angle);
+        }
+        sort(angles.begin(),angles.end());
+//        for(int i = 0;i<angles.size();i++)
+//        {
+//            qDebug()<<angles.at(i);
+//        }
+//        qDebug()<<angles.at(0);
+//        qDebug()<<angles.at(angles.size()-1);
+        qDebug()<<"before:"<<result_points.count();
+        for(int i = 0;i<result_points.count();i++)
+        {
+            if(result_points.at(i).angle == angles.at(0) || result_points.at(i).angle == angles.at(angles.size()-1))
+            {
+                result_points.removeAt(i);
+                i--;
+            }
+        }
+        qDebug()<<"after:"<<result_points.count();
+        int mean_x=0,mean_y=0;
+        float mean_angle=0;
+        for(int i = 0;i<result_points.count();i++)
+        {
+            mean_x += result_points.at(i).x;
+            mean_y += result_points.at(i).y;
+            mean_angle += result_points.at(i).angle;
+        }
+        mean_x = mean_x/result_points.count();
+        mean_y = mean_y/result_points.count();
+        mean_angle = mean_angle/result_points.count();
+        ui->mean_x->setText(QString::number(mean_x));
+        ui->mean_y->setText(QString::number(mean_y));
+        ui->mean_angle->setText(QString::number(mean_angle,'f',2));
+        result_points.clear();
+    }
 
     QPalette palette = ui->success_edit->palette();
     if(abs(temp1)<15&&abs(temp2)<15&&abs(temp3)<1)

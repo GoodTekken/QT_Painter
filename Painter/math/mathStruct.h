@@ -99,6 +99,14 @@ public:
     int label;
 };
 
+struct CoorStruct
+{
+public:
+    int x;
+    int y;
+    float angle;
+};
+
 
 
 #endif // MATHSTRUCT_H
