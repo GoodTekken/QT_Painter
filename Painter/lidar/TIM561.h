@@ -113,6 +113,8 @@ public:
 
     constexpr static const int TOTAL_NUMBER        = 843;
 
+    bool upsidedown;
+
 private:
 
     /**
@@ -289,6 +291,7 @@ private:
     * \brief Array containing all the current DataPoints (angle+distance)
     */
     std::vector<std::pair<float, uint16_t>> currentDataPoints;
+
 };
 
 

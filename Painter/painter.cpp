@@ -18,7 +18,6 @@ int painter_w;
 int painter_h;
 bool painter_resized = false;
 TIM561 tim;
-TIM561 tim2;
 bool connect_flag = false;
 
 Painter::Painter(QWidget *parent) : QMainWindow(parent), ui(new Ui::Painter)
@@ -439,6 +438,7 @@ bool Painter::eventFilter(QObject *object, QEvent *event)
 //void *p_basler_Trigger(void *arg)
 void *p_connect_Tim561(void *arg)
 {
+    tim.upsidedown = true;
     connect_flag = true;
     std::cout << "Connection..." << std::endl;
     if( tim.connect("192.168.0.71",2112))
@@ -468,7 +468,6 @@ void *p_disconnect_Tim561(void *arg)
     connect_flag = false;
     sleep(1);//1s;
     tim.close();
-    tim2.close();
     printf("Tim561 disnnect.\n");
 }
 
@@ -527,7 +526,8 @@ QList<QPoint> Painter::cal_leg(int pointlengthX[],int pointlengthY[])
     QList<QPoint> actuallegpoint;
     actuallegpoint.clear();
 
-    float theta = atan((ui->detect_width->text().toFloat()/2.0)/ui->detect_length->text().toFloat())*180/PI+30;
+//    float theta = atan((ui->detect_width->text().toFloat()/2.0)/ui->detect_length->text().toFloat())*180/PI+30;
+    float theta = 120;
     int countIndex = theta*3;
     float detectlength = ui->detect_length->text().toFloat()+100;
     int middle_placement = (TIM561::NBR_DATA/2) ;
@@ -557,8 +557,8 @@ QList<QPoint> Painter::cal_leg(int pointlengthX[],int pointlengthY[])
          if (j_count > 4)    //如果扫描的数量在10个以上，物体的宽度需要达到3cm才会认为检测到。
          {
              if (pointlengthY[i_count] < detectlength&&
-                 pointlengthY[i_count]>0&&
-                 abs(pointlengthX[i_count])<(ui->detect_width->text().toFloat()/2.0))
+                 abs(pointlengthX[i_count])>200&&
+                 abs(pointlengthX[i_count])<(ui->detect_width->text().toFloat()))
              {
                  for (int cnt = 0; cnt < j_count; cnt++)
                  {
@@ -599,9 +599,9 @@ QList<QPoint> Painter::cal_leg(int pointlengthX[],int pointlengthY[])
          int r = 8;
          if (j_count > 4)    //如果扫描的数量在10个以上，物体的宽度需要达到3cm才会认为检测到。
          {
-             if (pointlengthY[i_count] < detectlength &&
-                 pointlengthY[i_count] > 0 &&
-                 abs(pointlengthX[i_count])<(ui->detect_width->text().toFloat()/2.0))
+             if (pointlengthY[i_count] < detectlength&&
+                 abs(pointlengthX[i_count])>200&&
+                 abs(pointlengthX[i_count])<(ui->detect_width->text().toFloat()))
              {
                  for (int cnt = 0; cnt < j_count; cnt++)
                  {
@@ -660,8 +660,8 @@ void Painter::p_drawLine()
 
         if(actuallegpoint.count() ==2)
         {
-            if(UserMath::GetDiatanceBetweenPoint(orignal,actuallegpoint[0])>0&&
-               UserMath::GetDiatanceBetweenPoint(orignal,actuallegpoint[1])>0&&
+            if(UserMath::GetDiatanceBetweenPoint(orignal,actuallegpoint[0])!=0&&
+               UserMath::GetDiatanceBetweenPoint(orignal,actuallegpoint[1])!=0&&
                UserMath::GetDiatanceBetweenPoint(actuallegpoint[0],actuallegpoint[1])>500)
             {
                 //right point
@@ -841,6 +841,7 @@ void Painter::p_drawLine_Leg()
     connect_flag = true;
     if( tim.connect("192.168.0.71",2112))
     {
+        tim.upsidedown =false;
         std::cout << "Connected" << std::endl;
         if( tim.start() )
         {
@@ -854,6 +855,7 @@ void Painter::p_drawLine_Leg()
 
     if( tim.connect("192.168.0.72",2112))
     {
+        tim.upsidedown = true;
         std::cout << "Connected" << std::endl;
         if( tim.start() )
         {

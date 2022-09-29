@@ -59,14 +59,29 @@ void TIM561::update()
 
 void TIM561::updateDataPoints()
 {
-    float current_angle = -45;
-    for( int i = 0 ; i < NBR_DATA ; i++ )
+    if(upsidedown == false)
     {
-        /*stoul converts hex string to real hex int*/
-        currentDataPoints[i].second = std::stoul(currentScan.part[i+TelegramScan::ID::DATA_1],nullptr,16);
-        currentDataPoints[i].first = current_angle;
-        current_angle+=STEP_ANGLE;
+        float current_angle = -45;
+        for( int i = 0 ; i < NBR_DATA ; i++ )
+        {
+            /*stoul converts hex string to real hex int*/
+            currentDataPoints[i].second = std::stoul(currentScan.part[i+TelegramScan::ID::DATA_1],nullptr,16);
+            currentDataPoints[i].first = current_angle;
+            current_angle+=STEP_ANGLE;
+        }
     }
+    else
+    {
+        float current_angle = 225;
+        for( int i = 0 ; i < NBR_DATA ; i++ )
+        {
+            /*stoul converts hex string to real hex int*/
+            currentDataPoints[i].second = std::stoul(currentScan.part[i+TelegramScan::ID::DATA_1],nullptr,16);
+            currentDataPoints[i].first = current_angle;
+            current_angle-=STEP_ANGLE;
+        }
+    }
+
 
 //    TelegramScan telegram;
 //    telegram.part = currentScan.part;
@@ -114,17 +129,35 @@ void TIM561::updatemeandate()
                 count++;
             }
 
-            float current_angle = -45;
-            if(currentScan.part.size()==TOTAL_NUMBER)
+            if(upsidedown == false)
             {
-                for( int i = 0 ; i < NBR_DATA ; i++ )
+                float current_angle = -45;
+                if(currentScan.part.size()==TOTAL_NUMBER)
                 {
-                    /*stoul converts hex string to real hex int*/
-                    currentDataPoints[i].second = std::stoul(currentScan.part[i+TelegramScan::ID::DATA_1],nullptr,16);
-                    currentDataPoints[i].first = current_angle;
-                    current_angle+=STEP_ANGLE;
+                    for( int i = 0 ; i < NBR_DATA ; i++ )
+                    {
+                        /*stoul converts hex string to real hex int*/
+                        currentDataPoints[i].second = std::stoul(currentScan.part[i+TelegramScan::ID::DATA_1],nullptr,16);
+                        currentDataPoints[i].first = current_angle;
+                        current_angle+=STEP_ANGLE;
+                    }
                 }
             }
+            else
+            {
+                float current_angle = 225;
+                if(currentScan.part.size()==TOTAL_NUMBER)
+                {
+                    for( int i = 0 ; i < NBR_DATA ; i++ )
+                    {
+                        /*stoul converts hex string to real hex int*/
+                        currentDataPoints[i].second = std::stoul(currentScan.part[i+TelegramScan::ID::DATA_1],nullptr,16);
+                        currentDataPoints[i].first = current_angle;
+                        current_angle-=STEP_ANGLE;
+                    }
+                }
+            }
+
 
         }
     }
