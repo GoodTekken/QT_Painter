@@ -116,7 +116,7 @@ private slots:
     void showTimBlueLeg(const QPointF* points);
     void showTimGreenLeg(const QPointF* points);
 
-    QList<QPoint> cal_leg(int pointlengthX[],int pointlengthY[]);
+    QList<QPoint> cal_leg(int pointlengthX[],int pointlengthY[],int detectLength);
 
     void p_drawLine();
     void p_drawLine_Leg();

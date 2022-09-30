@@ -185,9 +185,9 @@ void Painter::New_File()
     ui->pos1_X->setText("0");
     ui->pos1_Y->setText("0");
     ui->pos1_angle->setText("0");
-    ui->pos2_X->setText("52");
-    ui->pos2_Y->setText("-172");
-    ui->pos2_angle->setText("0.6");
+    ui->pos2_X->setText("-5");
+    ui->pos2_Y->setText("20");
+    ui->pos2_angle->setText("11.19");
 
 }
 
@@ -438,7 +438,7 @@ bool Painter::eventFilter(QObject *object, QEvent *event)
 //void *p_basler_Trigger(void *arg)
 void *p_connect_Tim561(void *arg)
 {
-    tim.upsidedown = true;
+    tim.upsidedown = false;
     connect_flag = true;
     std::cout << "Connection..." << std::endl;
     if( tim.connect("192.168.0.71",2112))
@@ -521,7 +521,7 @@ void Painter::showTimGreenLeg(const QPointF* points)
 }
 
 
-QList<QPoint> Painter::cal_leg(int pointlengthX[],int pointlengthY[])
+QList<QPoint> Painter::cal_leg(int pointlengthX[],int pointlengthY[],int detectLength)
 {
     QList<QPoint> actuallegpoint;
     actuallegpoint.clear();
@@ -529,7 +529,6 @@ QList<QPoint> Painter::cal_leg(int pointlengthX[],int pointlengthY[])
 //    float theta = atan((ui->detect_width->text().toFloat()/2.0)/ui->detect_length->text().toFloat())*180/PI+30;
     float theta = 120;
     int countIndex = theta*3;
-    float detectlength = ui->detect_length->text().toFloat()+100;
     int middle_placement = (TIM561::NBR_DATA/2) ;
     int cal_startAngleIndex = middle_placement - countIndex;
     int cal_endAngleIndex = middle_placement + countIndex;
@@ -556,7 +555,7 @@ QList<QPoint> Painter::cal_leg(int pointlengthX[],int pointlengthY[])
          int r = 8;
          if (j_count > 4)    //如果扫描的数量在10个以上，物体的宽度需要达到3cm才会认为检测到。
          {
-             if (pointlengthY[i_count] < detectlength&&
+             if (abs(pointlengthY[i_count]) < detectLength&&
                  abs(pointlengthX[i_count])>200&&
                  abs(pointlengthX[i_count])<(ui->detect_width->text().toFloat()))
              {
@@ -599,7 +598,7 @@ QList<QPoint> Painter::cal_leg(int pointlengthX[],int pointlengthY[])
          int r = 8;
          if (j_count > 4)    //如果扫描的数量在10个以上，物体的宽度需要达到3cm才会认为检测到。
          {
-             if (pointlengthY[i_count] < detectlength&&
+             if (abs(pointlengthY[i_count]) < detectLength&&
                  abs(pointlengthX[i_count])>200&&
                  abs(pointlengthX[i_count])<(ui->detect_width->text().toFloat()))
              {
@@ -652,7 +651,7 @@ void Painter::p_drawLine()
 
 
         QList<QPoint> actuallegpoint;
-        actuallegpoint=cal_leg(pointlengthX,pointlengthY);
+        actuallegpoint=cal_leg(pointlengthX,pointlengthY,500);
 
 
         QPoint orignal(0,0);
@@ -715,7 +714,7 @@ void Painter::p_manual_drawLine(const std::vector<std::pair<float, uint16_t>>* t
 
 
         QList<QPoint> actuallegpoint;
-        actuallegpoint=cal_leg(pointlengthX,pointlengthY);
+        actuallegpoint=cal_leg(pointlengthX,pointlengthY,500);
 
 
         QPoint orignal(0,0);
@@ -778,7 +777,7 @@ void Painter::p_manual_drawLineUp(const std::vector<std::pair<float, uint16_t>>*
 
 
         QList<QPoint> actuallegpoint;
-        actuallegpoint=cal_leg(pointlengthX,pointlengthY);
+        actuallegpoint=cal_leg(pointlengthX,pointlengthY,500);
 
 
         QPoint orignal(0,0);
