@@ -184,10 +184,10 @@ void Painter::New_File()
     ui->rack_width->setText("1000");
     ui->pos1_X->setText("0");
     ui->pos1_Y->setText("0");
-    ui->pos1_angle->setText("0");
+    ui->pos1_angle->setText("-9.3");
     ui->pos2_X->setText("-5");
     ui->pos2_Y->setText("20");
-    ui->pos2_angle->setText("11.19");
+    ui->pos2_angle->setText("1.89");
 
 }
 
@@ -777,7 +777,8 @@ void Painter::p_manual_drawLineUp(const std::vector<std::pair<float, uint16_t>>*
 
 
         QList<QPoint> actuallegpoint;
-        actuallegpoint=cal_leg(pointlengthX,pointlengthY,500);
+//        actuallegpoint=cal_leg(pointlengthX,pointlengthY,500);
+        actuallegpoint=cal_leg(pointlengthX,pointlengthY,1700);    //1700
 
 
         QPoint orignal(0,0);
